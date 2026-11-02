@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dermis — calibrated touch for human and robot hands</title>
+<script src="./vendor/react.js"></script>
+<script src="./vendor/react-dom.js"></script>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&amp;family=Geist:wght@400..700&amp;family=Geist+Mono:wght@400..600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF}
+a{color:#1E46C8}a:hover{color:#0B0D12}
+.dm{--bg:#FFFFFF;--bg2:#F5F6F8;--ink:#0B0D12;--ink2:#2E333D;--muted:#5C6370;--dim:#868D99;--line:#E3E6EB;--line2:#D2D7DE;--human:#F2551D;--human-ink:#B93A0E;--robot:#2457F5;--robot-ink:#1E46C8;--mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--sans:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;--display:'Bricolage Grotesque','Geist',ui-sans-serif,system-ui,sans-serif;font-family:var(--sans);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:clip;width:100%;font-size:16px;line-height:1.5}
+.dm *{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px;width:100%}
+.label{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--muted);display:inline-flex;align-items:center;gap:14px;margin:0;text-transform:uppercase}
+.label .ln{width:28px;height:1px;background:var(--ink);display:block}
+.label b{color:var(--ink);font-weight:600}
+.h2{font-family:var(--display);font-weight:600;font-size:clamp(34px,4.2vw,56px);line-height:1.04;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.h3{font-family:var(--display);font-weight:600;font-size:26px;line-height:1.15;letter-spacing:-.02em;margin:0}
+.lede{font-size:clamp(17px,1.35vw,19px);line-height:1.6;color:var(--ink2);margin:0;text-wrap:pretty}
+.body{font-size:15.5px;line-height:1.6;color:var(--ink2);margin:0;text-wrap:pretty}
+.mono{font-family:var(--mono)}
+.sec{padding:128px 0;position:relative;scroll-margin-top:64px}
+.sec.alt{background:var(--bg2)}
+.sec-head{display:flex;flex-direction:column;gap:20px;max-width:760px}
+.sub-head{display:flex;flex-direction:column;gap:12px;max-width:720px;margin-top:112px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:999px;font-family:var(--sans);font-weight:550;font-size:15px;text-decoration:none;white-space:nowrap;transition:transform .2s ease,background-color .2s ease,box-shadow .2s ease;cursor:pointer;border:0}
+.btn-pri{background:var(--ink);color:#FFFFFF}.btn-pri:hover{background:#252A35;color:#FFFFFF;transform:translateY(-1px)}
+.btn-sec{background:#FFFFFF;color:var(--ink);box-shadow:inset 0 0 0 1px var(--line2)}.btn-sec:hover{color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+/* nav */
+.nav{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.82);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid rgba(227,230,235,.9)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:24px;min-height:64px}
+.logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font-family:var(--display);font-weight:650;font-size:21px;letter-spacing:-.03em;min-height:44px}
+.logo:hover{color:var(--ink)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{color:var(--ink2);text-decoration:none;font-size:14.5px;font-weight:500;padding:12px 0}
+.nav-links a:hover{color:var(--ink)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.nav-cta{min-height:44px;padding:0 18px;font-size:14px}
+.menu-btn{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line2);background:#FFFFFF;color:var(--ink);align-items:center;justify-content:center;cursor:pointer;padding:0}
+.mnav{display:none}
+/* hero scene */
+.scene{position:relative;height:1760px;view-timeline:--scene block}
+.stage{position:sticky;top:64px;height:min(780px,calc(100vh - 64px));display:flex;align-items:center;overflow:clip}
+.stage-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:24px;align-items:center;height:100%}
+.hero-copy{display:flex;flex-direction:column;gap:26px;max-width:470px}
+.h1{font-family:var(--display);font-weight:520;font-size:clamp(44px,5.3vw,80px);line-height:.98;letter-spacing:-.045em;margin:0}
+.h1 span{display:block}
+.h1 .two{color:var(--dim)}
+.hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px}
+.text-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;color:var(--ink);font-weight:600;font-size:15px;text-decoration:none;border-bottom:1.5px solid var(--ink)}
+.text-link:hover{color:var(--human-ink);border-color:var(--human-ink)}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.status{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--ink2);margin:0;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#FFFFFF;width:max-content}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--human);display:block}
+.hand-wrap{height:100%;min-height:0;display:flex;align-items:center;justify-content:center;padding:12px 0}
+.hand-svg{height:100%;max-height:720px;width:auto;max-width:100%;overflow:visible;display:block}
+.hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);pointer-events:none}
+.hint i{display:block;width:1px;height:28px;background:var(--line2)}
+.pod-dot{transform-box:fill-box;transform-origin:center}
+.hand-body{transform-origin:390px 420px}
+.pod,.ping{transform-box:fill-box;transform-origin:center}
+/* problem */
+.statement{font-family:var(--display);font-weight:560;font-size:clamp(30px,3.9vw,54px);line-height:1.1;letter-spacing:-.03em;margin:28px 0 0;max-width:1000px;text-wrap:pretty}
+.evid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:56px;align-items:center;margin-top:88px}
+.legend{display:flex;gap:20px;font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:26px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:6px;border-radius:3px;display:inline-block}
+.bars{display:grid;gap:24px}
+.bar-row{display:grid;grid-template-columns:150px minmax(0,1fr) 56px;gap:18px;align-items:center}
+.bar-name{font-size:14.5px;font-weight:550;line-height:1.3}
+.bar-name small{display:block;font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}
+.track{display:grid;gap:6px}
+.b{height:10px;border-radius:99px;transform-origin:left center}
+.b.v{background:#C5CAD2}.b.t{background:var(--human)}
+.delta{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--human-ink);text-align:right}
+.src{font-family:var(--mono);font-size:11.5px;line-height:1.55;color:var(--muted);margin:26px 0 0}
+/* idea: twin */
+.twin{display:grid;grid-template-columns:minmax(0,1fr) 240px minmax(0,1fr);gap:20px;align-items:stretch;margin-top:64px}
+.tcard{background:#FFFFFF;border:1px solid var(--line);border-radius:26px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.tcard-h{display:flex;align-items:center;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:none;padding:5px 10px;border-radius:999px}
+.tag.h{background:#FDEEE7;color:var(--human-ink)}.tag.r{background:#E9EFFE;color:var(--robot-ink)}
+.tcard svg.hand{width:100%;max-width:300px;height:auto;margin:6px auto 0;display:block}
+.tcard svg.hand.hand-lg{width:auto;height:340px;max-width:100%}
+.conn{display:flex;flex-direction:column;justify-content:center;gap:14px;padding:20px;border-radius:26px;background:var(--ink);color:#FFFFFF}
+.conn-k{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#A9B0BC;margin:0}
+.conn-t{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15;margin:0}
+.conn-d{font-size:13.5px;line-height:1.5;color:#C9CED6;margin:0}
+.loopbox{background:#161A22;border-radius:14px;padding:10px 0;overflow:clip}
+/* idea: usp */
+.usps{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(255px,100%),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:24px;overflow:clip;margin-top:40px}
+.usp{background:#FFFFFF;padding:30px 28px 32px;display:flex;flex-direction:column;gap:14px}
+.usp-i{width:44px;height:44px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.usp-n{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em}
+.usp h4{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:-.02em;line-height:1.15;margin:0}
+.tag-line{font-family:var(--display);font-weight:520;font-size:clamp(22px,2.2vw,30px);letter-spacing:-.025em;line-height:1.2;margin:0;color:var(--ink)}
+.tag-line em{font-style:normal;color:var(--human-ink)}
+/* idea: matrix */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:22px;background:#FFFFFF;margin-top:20px}
+.tbl{width:100%;min-width:860px;border-collapse:collapse}
+.tbl th,.tbl td{padding:18px 20px;text-align:left;border-bottom:1px solid var(--line);font-size:14.5px;vertical-align:middle;line-height:1.4}
+.tbl thead th{font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;background:#FAFBFC}
+.tbl tbody th{font-weight:600;color:var(--ink);width:27%}
+.tbl tbody th small{display:block;font-weight:400;font-size:12.5px;color:var(--muted);margin-top:3px}
+.tbl tr.us th,.tbl tr.us td{background:var(--ink);color:#FFFFFF;border-bottom:0}
+.tbl tr.us th small{color:#B8BEC9}
+.y{display:inline-flex;align-items:center;gap:8px;color:var(--ink);font-weight:550}
+.tbl tr.us .y{color:#FFFFFF}
+.n{color:#9AA1AC}
+.p{color:var(--muted)}
+/* idea: why it matters */
+.impact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:64px;align-items:center;margin-top:40px}
+.fly{position:relative;width:100%;max-width:520px;aspect-ratio:1/1;margin:0 auto}
+.fly-ring{position:absolute;inset:0;width:100%;height:100%}
+.fn{position:absolute;width:176px;transform:translate(-50%,-50%);background:#FFFFFF;border:1px solid var(--line);border-radius:16px;padding:14px 16px;box-shadow:0 14px 30px -18px rgba(11,13,18,.28);font-size:13.5px;line-height:1.4;color:var(--ink2)}
+.fn b{display:block;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);letter-spacing:.06em;margin-bottom:4px}
+.fn-1{left:50%;top:17.3%}.fn-2{left:82.7%;top:50%}.fn-3{left:50%;top:82.7%}.fn-4{left:17.3%;top:50%}
+.fc{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;width:150px}
+.fc-t{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.02em;line-height:1.1;margin:0}
+.fc-d{font-family:var(--mono);font-size:11px;color:var(--muted);margin:6px 0 0}
+.imp-list{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.imp{display:grid;grid-template-columns:44px minmax(0,1fr);gap:16px;padding:24px 0;border-bottom:1px solid var(--line)}
+.imp-n{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:5px}
+.imp h4{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.02em;margin:0 0 6px;line-height:1.2}
+/* product */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;padding:6px;background:#FFFFFF;border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;margin-top:48px}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:0;background:transparent;color:var(--ink2);font-family:var(--sans);font-size:14.5px;font-weight:550;cursor:pointer}
+.tab:hover{color:var(--ink);background:var(--bg2)}
+.tab.on{background:var(--ink);color:#FFFFFF}
+.prod-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:48px;align-items:start;margin-top:36px}
+.panel{display:flex;flex-direction:column;gap:18px;padding-top:12px}
+ul.feat{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
+ul.feat li{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;line-height:1.5;color:var(--ink2)}
+ul.feat li::before{content:"";flex:none;width:7px;height:7px;border-radius:2px;background:var(--ink);margin-top:8px}
+.studio{background:#FFFFFF;border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 0 rgba(11,13,18,.03),0 30px 60px -30px rgba(11,13,18,.22);overflow:clip}
+.studio-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:#FAFBFC}
+.dots{display:flex;gap:7px}.dots i{width:11px;height:11px;border-radius:50%;background:#DADEE4;display:block}
+.studio-title{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rec{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px;color:var(--human-ink)}
+.live{width:8px;height:8px;border-radius:50%;background:var(--human);flex:none;display:block}
+.studio-body{display:grid;grid-template-columns:168px minmax(0,1fr)}
+.side{border-right:1px solid var(--line);padding:14px 12px;display:flex;flex-direction:column;gap:4px;background:#FCFCFD}
+.side-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:4px 6px 8px}
+.loc{display:flex;flex-direction:column;gap:5px;padding:8px;border-radius:10px}
+.loc.sel{background:var(--bg2)}
+.loc-n{font-family:var(--mono);font-size:11.5px;color:var(--ink2)}
+.mtr{height:4px;border-radius:2px;background:var(--line);overflow:clip;display:flex}
+.mtr i{display:block;height:100%;border-radius:2px}
+.chart-wrap{padding:16px 18px 18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.chart-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.seg{display:flex;gap:4px;padding:4px;background:var(--bg2);border-radius:12px}
+.seg button{min-height:36px;padding:0 14px;border-radius:9px;border:0;background:transparent;font-family:var(--sans);font-size:13.5px;font-weight:550;color:var(--ink2);cursor:pointer}
+.seg button.on{background:#FFFFFF;color:var(--ink);box-shadow:0 1px 2px rgba(11,13,18,.12)}
+.state{font-family:var(--mono);font-size:11.5px;padding:6px 10px;border-radius:8px;background:#FDEEE7;color:var(--human-ink)}
+.chart svg{width:100%;height:auto;display:block}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--ink2);border:1px solid var(--line);border-radius:8px;padding:5px 9px}
+.badge i{width:6px;height:6px;border-radius:50%;display:block}
+/* how + spec */
+.flow{list-style:none;margin:48px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:28px;position:relative}
+.flow li{display:flex;flex-direction:column;gap:10px;padding-top:22px;border-top:1.5px solid var(--ink)}
+.flow-n{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.flow h4{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.02em;line-height:1.2;margin:0}
+.flow p{margin:0;font-size:15px;line-height:1.55;color:var(--ink2)}
+.specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,100%),1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:20px;overflow:clip;margin-top:56px}
+.spec{background:#FFFFFF;padding:20px 20px 22px;display:flex;flex-direction:column;gap:4px}
+.spec-k{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.spec-v{font-family:var(--display);font-weight:600;font-size:26px;letter-spacing:-.03em;line-height:1.15}
+.spec-d{font-size:13px;color:var(--muted);line-height:1.4}
+.fine{font-family:var(--mono);font-size:12px;color:var(--muted);line-height:1.55;margin:0}
+/* founding */
+.big-lede{font-family:var(--display);font-weight:520;font-size:clamp(26px,2.8vw,38px);line-height:1.2;letter-spacing:-.025em;margin:0;max-width:860px;text-wrap:pretty}
+.found{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:20px;margin-top:56px;align-items:stretch}
+.plan{background:#FFFFFF;border:1px solid var(--line);border-radius:26px;padding:34px;display:flex;flex-direction:column;gap:18px}
+.plan.feat-plan{border:1.5px solid var(--ink);box-shadow:0 30px 60px -36px rgba(11,13,18,.35)}
+.plan-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.plan-k{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin:0}
+.price-v{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.price-v b{font-family:var(--display);font-weight:650;font-size:64px;letter-spacing:-.045em;line-height:1}
+.price-v s{font-family:var(--mono);font-size:15px;color:var(--muted)}
+.slots{font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:999px;background:var(--ink);color:#FFFFFF}
+.stack{display:flex;flex-direction:column;gap:20px}
+.form{margin-top:20px;background:#FFFFFF;border:1px solid var(--line);border-radius:26px;padding:36px;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:48px;scroll-margin-top:80px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:16px}
+.field{display:flex;flex-direction:column;gap:7px}
+.field.full{grid-column:1/-1}
+.field label{font-size:13.5px;font-weight:550;color:var(--ink)}
+.field input,.field select,.field textarea{font-family:var(--sans);font-size:15px;color:var(--ink);background:#FFFFFF;border:1px solid var(--line2);border-radius:12px;padding:12px 14px;min-height:48px;width:100%;outline:none;transition:border-color .2s,box-shadow .2s}
+.field textarea{min-height:104px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px rgba(36,87,245,.15)}
+.form-foot{grid-column:1/-1;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px}
+/* final + footer */
+.final{text-align:center;padding:150px 0;position:relative;overflow:clip}
+.final .h2{font-size:clamp(38px,5.4vw,76px);max-width:960px;margin:0 auto}
+.foot{border-top:1px solid var(--line);padding:64px 0 48px;background:#FFFFFF}
+.foot-grid{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));gap:40px}
+.foot h4{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+.foot ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.foot ul a{color:var(--ink2);text-decoration:none;font-size:14.5px;display:inline-block;padding:6px 0}
+.foot ul a:hover{color:var(--ink)}
+.sources{margin-top:48px;border-top:1px solid var(--line);padding-top:20px}
+.sources summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--muted);min-height:44px;display:flex;align-items:center}
+.sources ol{margin:8px 0 0;padding-left:20px;display:grid;gap:8px;font-size:13px;line-height:1.5;color:var(--muted)}
+.sources ol a{color:var(--ink2)}
+.legal{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+/* responsive */
+@media (max-width:1040px){
+.twin,.prod-grid,.evid,.impact,.form,.found{grid-template-columns:minmax(0,1fr)}
+.foot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:900px){
+.nav-links{display:none}
+.menu-btn{display:inline-flex}
+.mnav{display:flex;flex-direction:column;padding:8px 0 16px;border-top:1px solid var(--line)}
+.mnav a{color:var(--ink);text-decoration:none;font-size:17px;font-weight:550;padding:12px 0;min-height:44px;display:flex;align-items:center}
+.scene{height:1420px}
+.stage-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:4px;padding:20px 0 8px}
+.hero-copy{gap:16px;max-width:560px}
+.h1{font-size:clamp(38px,9vw,56px)}
+.hero-sub{font-size:15.5px}
+.status,.hint{display:none}
+.co{display:none}
+}
+@media (max-width:640px){
+.wrap{padding:0 20px}
+.sec{padding:88px 0}
+.nav-cta{display:none}
+.sub-head{margin-top:80px}
+.bar-row{grid-template-columns:minmax(0,1fr) auto}
+.bar-row .track{grid-column:1/-1;grid-row:2}
+.studio-body{grid-template-columns:minmax(0,1fr)}
+.side{display:none}
+.fly{aspect-ratio:auto;display:flex;flex-direction:column;gap:12px}
+.fly-ring,.fc{display:none}
+.fn{position:static;transform:none;width:auto}
+.plan,.form{padding:24px}
+.price-v b{font-size:52px}
+.foot-grid{grid-template-columns:minmax(0,1fr)}
+.tabs{border-radius:18px}
+}
+/* motion */
+@keyframes rv{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes inkIn{from{color:#C9CED6}to{color:#0B0D12}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes flowA{to{stroke-dashoffset:-160}}
+@keyframes pulse{0%{transform:scale(.7);opacity:.6}100%{transform:scale(2.2);opacity:0}}
+@keyframes loop{to{transform:translateX(-300px)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes live{0%{box-shadow:0 0 0 0 rgba(242,85,29,.5)}100%{box-shadow:0 0 0 9px rgba(242,85,29,0)}}
+@keyframes podIn{from{transform:translate(var(--px),var(--py)) scale(1.3)}}
+@keyframes litCore{from{fill:#DCE1E8}}
+@keyframes litHalo{from{opacity:0}}
+@keyframes ping{0%{opacity:0;transform:scale(1)}20%{opacity:.85;transform:scale(1.04)}100%{opacity:0;transform:scale(1.7)}}
+@keyframes coIn{from{opacity:.14}}
+@keyframes handIn{from{transform:translateY(34px) scale(.965)}}
+@keyframes ringsIn{from{transform:scale(.82);opacity:.2}}
+@keyframes hintOut{to{opacity:0}}
+@keyframes ledOn{from{fill:#3A4252}}
+@keyframes dotOn{from{background:#D2D7DE}}
+@keyframes statusOn{from{color:#9AA1AC;border-color:#E3E6EB}}
+@media (prefers-reduced-motion:no-preference){
+.motion .intro{animation:rv .9s cubic-bezier(.2,.7,.2,1) both}
+.motion .d1{animation-delay:.08s}.motion .d2{animation-delay:.16s}.motion .d3{animation-delay:.24s}.motion .d4{animation-delay:.32s}
+.motion .live{animation:live 1.8s ease-out infinite}
+.motion .flow-a{animation:flowA 9s linear infinite}
+.motion .pulse{animation:pulse 2.4s ease-out infinite}
+.motion .pulse.p2{animation-delay:.6s}.motion .pulse.p3{animation-delay:1.2s}.motion .pulse.p4{animation-delay:1.8s}
+.motion .loop{animation:loop 5s linear infinite}
+.motion .draw .tr{stroke-dasharray:1;animation:draw 1.8s cubic-bezier(.3,.6,.2,1) both}
+.motion .draw .tr.r{animation-delay:.12s}
+@supports (animation-timeline: view()){
+.motion .rv{animation:rv linear both;animation-timeline:view();animation-range:entry 0% entry 55%}
+.motion .rv2{animation:rv linear both;animation-timeline:view();animation-range:entry 12% entry 70%}
+.motion .rv3{animation:rv linear both;animation-timeline:view();animation-range:entry 24% entry 85%}
+.motion .ink1{animation:inkIn linear both;animation-timeline:view();animation-range:cover 12% cover 32%}
+.motion .ink2{animation:inkIn linear both;animation-timeline:view();animation-range:cover 26% cover 46%}
+.motion .grow{animation:grow linear both;animation-timeline:view();animation-range:entry 20% cover 45%}
+.motion .scn{animation-timeline:--scene;animation-fill-mode:both;animation-timing-function:linear}
+.motion .hand-body{animation-name:handIn;animation-range:contain 0% contain 40%}
+.motion .bg-rings{animation-name:ringsIn;animation-range:contain 0% contain 50%}
+.motion .hint{animation-name:hintOut;animation-range:contain 0% contain 6%}
+.motion .pod{animation-name:podIn}
+.motion .pd5{--px:-170px;--py:-30px;animation-range:contain 0% contain 34%}
+.motion .pd1{--px:-120px;--py:-150px;animation-range:contain 4% contain 38%}
+.motion .pd2{--px:10px;--py:-160px;animation-range:contain 8% contain 42%}
+.motion .pd3{--px:130px;--py:-140px;animation-range:contain 12% contain 46%}
+.motion .pd4{--px:190px;--py:-60px;animation-range:contain 16% contain 50%}
+.motion .pd6{--px:170px;--py:40px;animation-range:contain 20% contain 54%}
+.motion .core{animation-name:litCore}
+.motion .halo{animation-name:litHalo}
+.motion .ping{animation-name:ping}
+.motion .tc{stroke-dasharray:1;animation-name:draw}
+.motion .co{animation-name:coIn}
+.motion .spk{stroke-dasharray:1;animation-name:draw}
+.motion .cr5,.motion .ha5{animation-range:contain 32% contain 37%}.motion .pg5{animation-range:contain 33% contain 47%}.motion .tc5{animation-range:contain 34% contain 52%}.motion .co5{animation-range:contain 34% contain 40%}.motion .sp5{animation-range:contain 36% contain 50%}
+.motion .cr1,.motion .ha1{animation-range:contain 36% contain 41%}.motion .pg1{animation-range:contain 37% contain 51%}.motion .tc1{animation-range:contain 38% contain 56%}.motion .co1{animation-range:contain 38% contain 44%}.motion .sp1{animation-range:contain 40% contain 54%}
+.motion .cr2,.motion .ha2{animation-range:contain 40% contain 45%}.motion .pg2{animation-range:contain 41% contain 55%}.motion .tc2{animation-range:contain 42% contain 60%}.motion .co2{animation-range:contain 42% contain 48%}.motion .sp2{animation-range:contain 44% contain 58%}
+.motion .cr3,.motion .ha3{animation-range:contain 44% contain 49%}.motion .pg3{animation-range:contain 45% contain 59%}.motion .tc3{animation-range:contain 46% contain 64%}.motion .co3{animation-range:contain 46% contain 52%}.motion .sp3{animation-range:contain 48% contain 62%}
+.motion .cr4,.motion .ha4{animation-range:contain 48% contain 53%}.motion .pg4{animation-range:contain 49% contain 63%}.motion .tc4{animation-range:contain 50% contain 68%}.motion .co4{animation-range:contain 50% contain 56%}.motion .sp4{animation-range:contain 52% contain 66%}
+.motion .cr6,.motion .ha6{animation-range:contain 52% contain 57%}.motion .pg6{animation-range:contain 53% contain 67%}.motion .tc6{animation-range:contain 54% contain 70%}.motion .co6{animation-range:contain 54% contain 60%}.motion .sp6{animation-range:contain 56% contain 70%}
+.motion .hub-led{animation-name:ledOn;animation-range:contain 70% contain 74%}
+.motion .sdot{animation-name:dotOn;animation-range:contain 72% contain 78%}
+.motion .status{animation-name:statusOn;animation-range:contain 72% contain 78%}
+}
+}
+</style>
+</helmet>
+<div id="top" class="{{rootCls}}">
+
+<header class="nav">
+<div class="wrap">
+<div class="nav-in">
+<a class="logo" href="#top" aria-label="Dermis home">
+<svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><circle cx="10" cy="11" r="9" fill="#F2551D"></circle><circle cx="20" cy="11" r="9" fill="#2457F5" style="mix-blend-mode:multiply"></circle></svg>
+<span>Dermis</span>
+</a>
+<nav class="nav-links" aria-label="Primary">
+<a href="#problem">Problem</a>
+<a href="#idea">Idea</a>
+<a href="#how">How it works</a>
+<a href="#product">Product</a>
+</nav>
+<div class="nav-right">
+<a class="btn btn-pri nav-cta" href="{{contactHref}}">Get in touch</a>
+<button type="button" class="menu-btn" aria-label="{{menuLabel}}" aria-expanded="{{menuOpen}}" onClick="{{toggleMenu}}">
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h14M3 10h14M3 14h14"></path></svg>
+</button>
+</div>
+</div>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}">
+<nav class="mnav" aria-label="Mobile">
+<a href="#problem" onClick="{{closeMenu}}">Problem</a>
+<a href="#idea" onClick="{{closeMenu}}">Idea</a>
+<a href="#how" onClick="{{closeMenu}}">How it works</a>
+<a href="#product" onClick="{{closeMenu}}">Product</a>
+<a href="{{contactHref}}" onClick="{{closeMenu}}">Get in touch</a>
+</nav>
+</sc-if>
+</div>
+</header>
+
+<section class="scene" aria-labelledby="hero-title">
+<div class="stage">
+<div class="wrap" style="height:100%">
+<div class="stage-grid">
+<div class="hero-copy">
+<p class="label intro"><span class="ln"></span>Calibrated touch for human and robot hands</p>
+<h1 id="hero-title" class="h1"><span class="intro d1">Change the skin.</span><span class="two intro d2">Keep the newtons.</span></h1>
+<p class="lede hero-sub intro d3">Dermis pods give a human glove and a robot hand the same calibrated sense of touch. Swap a skin, recalibrate in minutes, and keep reading pressure and shear in newtons.</p>
+<div class="hero-actions intro d4">
+<a class="text-link" href="#idea">See what makes it different
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3v10M4 9l4 4 4-4"></path></svg>
+</a>
+</div>
+<p class="status scn"><span class="sdot scn"></span>6 pods · synced · in newtons</p>
+</div>
+
+<div class="hand-wrap">
+<svg class="hand-svg" viewBox="0 0 760 680" role="img" aria-label="A hand with Dermis sensing patches covering the fingertips and palm; each patch lights up and streams pressure and shear data">
+<defs>
+<linearGradient id="gHand" gradientUnits="userSpaceOnUse" x1="0" y1="110" x2="0" y2="680"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#EDF0F3"></stop></linearGradient>
+<pattern id="taxel" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.15" fill="#FFFFFF" opacity=".5"></circle></pattern>
+<filter id="fHand" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0B0D12" flood-opacity=".08"></feDropShadow></filter>
+</defs>
+
+<g class="bg-rings scn" fill="none" stroke="#2457F5" stroke-dasharray="2 9" style="transform-origin:390px 420px">
+<circle class="flow-a" cx="390" cy="420" r="190" stroke-opacity=".22"></circle>
+<circle class="flow-a" cx="390" cy="420" r="262" stroke-opacity=".15"></circle>
+<circle class="flow-a" cx="390" cy="420" r="334" stroke-opacity=".09"></circle>
+</g>
+
+<g class="hand-body scn">
+<g filter="url(#fHand)">
+<g fill="#CBD2DB" stroke="#CBD2DB" stroke-width="3" stroke-linejoin="round">
+<path d="M312.0 666.0 C310.7 659.0 307.7 639.7 304.0 624.0 C300.3 608.3 294.0 588.0 290.0 572.0 C286.0 556.0 281.7 543.0 280.0 528.0 C278.3 513.0 279.0 498.3 280.0 482.0 C281.0 465.7 283.7 446.7 286.0 430.0 C288.3 413.3 290.0 394.7 294.0 382.0 C298.0 369.3 302.0 361.3 310.0 354.0 C318.0 346.7 328.7 342.0 342.0 338.0 C355.3 334.0 373.7 329.7 390.0 330.0 C406.3 330.3 426.3 335.3 440.0 340.0 C453.7 344.7 463.7 351.0 472.0 358.0 C480.3 365.0 485.7 369.7 490.0 382.0 C494.3 394.3 496.3 414.0 498.0 432.0 C499.7 450.0 500.7 470.0 500.0 490.0 C499.3 510.0 497.0 531.7 494.0 552.0 C491.0 572.3 485.3 593.0 482.0 612.0 C478.7 631.0 475.3 657.0 474.0 666.0 Z"></path>
+<path d="M292.1 394.1 C291.4 387.2 290.5 373.7 288.2 352.6 C285.8 331.5 280.8 291.1 278.2 267.7 C275.6 244.3 274.1 229.4 272.6 212.1 C271.1 194.8 269.7 171.8 269.1 163.8 A17.0 17.0 0 0 1 302.9 160.2 C304.0 168.2 306.9 190.9 309.4 207.9 C311.9 224.9 314.1 239.1 317.8 262.3 C321.6 285.6 328.8 326.2 331.8 347.4 C334.9 368.7 335.2 382.8 335.9 389.9 Z"></path>
+<path d="M343.0 383.0 C342.7 375.3 341.7 360.3 341.0 337.0 C340.4 313.6 339.5 269.0 339.0 243.0 C338.5 216.9 338.3 200.2 338.0 180.8 C337.8 161.4 337.6 135.7 337.5 126.6 A17.5 17.5 0 0 1 372.5 125.4 C373.1 134.3 374.6 159.9 376.0 179.2 C377.4 198.5 379.1 215.1 381.0 241.0 C382.8 267.0 385.6 311.7 387.0 335.0 C388.3 358.3 388.6 373.3 389.0 381.0 Z"></path>
+<path d="M394.0 387.0 C394.4 379.3 394.4 363.0 396.0 340.8 C397.7 318.5 401.7 277.6 404.0 253.6 C406.4 229.6 408.3 213.9 410.0 196.8 C411.8 179.7 413.8 158.6 414.5 150.9 A16.5 16.5 0 0 1 447.5 153.1 C447.2 160.8 446.5 182.0 446.0 199.2 C445.4 216.4 445.0 232.4 444.0 256.4 C443.0 280.4 441.0 321.1 440.0 343.2 C439.0 365.3 438.3 381.3 438.0 389.0 Z"></path>
+<path d="M439.3 408.6 C440.6 401.2 443.4 382.7 447.4 364.3 C451.4 346.0 459.1 316.5 463.3 298.6 C467.6 280.8 469.9 269.7 472.8 257.2 C475.6 244.7 479.0 229.2 480.2 223.6 A14.0 14.0 0 0 1 507.8 228.4 C507.0 234.2 505.1 250.0 503.2 262.8 C501.4 275.6 499.8 287.2 496.7 305.4 C493.6 323.5 488.0 353.3 484.6 371.7 C481.3 390.0 478.0 408.1 476.7 415.4 Z"></path>
+<path d="M299.2 599.4 C296.0 592.3 291.0 575.2 280.2 556.7 C269.3 538.2 247.1 509.6 234.1 488.4 C221.1 467.1 210.5 447.5 202.2 429.3 C193.9 411.1 187.3 387.4 184.3 379.0 A19.0 19.0 0 0 1 219.7 365.0 C223.0 372.6 230.8 394.6 239.8 410.7 C248.9 426.8 259.3 442.2 273.9 461.6 C288.6 481.1 314.7 508.8 327.8 527.3 C341.0 545.8 348.7 565.0 352.8 572.6 Z"></path>
+</g>
+</g>
+<g fill="url(#gHand)">
+<path d="M312.0 666.0 C310.7 659.0 307.7 639.7 304.0 624.0 C300.3 608.3 294.0 588.0 290.0 572.0 C286.0 556.0 281.7 543.0 280.0 528.0 C278.3 513.0 279.0 498.3 280.0 482.0 C281.0 465.7 283.7 446.7 286.0 430.0 C288.3 413.3 290.0 394.7 294.0 382.0 C298.0 369.3 302.0 361.3 310.0 354.0 C318.0 346.7 328.7 342.0 342.0 338.0 C355.3 334.0 373.7 329.7 390.0 330.0 C406.3 330.3 426.3 335.3 440.0 340.0 C453.7 344.7 463.7 351.0 472.0 358.0 C480.3 365.0 485.7 369.7 490.0 382.0 C494.3 394.3 496.3 414.0 498.0 432.0 C499.7 450.0 500.7 470.0 500.0 490.0 C499.3 510.0 497.0 531.7 494.0 552.0 C491.0 572.3 485.3 593.0 482.0 612.0 C478.7 631.0 475.3 657.0 474.0 666.0 Z"></path>
+<path d="M292.1 394.1 C291.4 387.2 290.5 373.7 288.2 352.6 C285.8 331.5 280.8 291.1 278.2 267.7 C275.6 244.3 274.1 229.4 272.6 212.1 C271.1 194.8 269.7 171.8 269.1 163.8 A17.0 17.0 0 0 1 302.9 160.2 C304.0 168.2 306.9 190.9 309.4 207.9 C311.9 224.9 314.1 239.1 317.8 262.3 C321.6 285.6 328.8 326.2 331.8 347.4 C334.9 368.7 335.2 382.8 335.9 389.9 Z"></path>
+<path d="M343.0 383.0 C342.7 375.3 341.7 360.3 341.0 337.0 C340.4 313.6 339.5 269.0 339.0 243.0 C338.5 216.9 338.3 200.2 338.0 180.8 C337.8 161.4 337.6 135.7 337.5 126.6 A17.5 17.5 0 0 1 372.5 125.4 C373.1 134.3 374.6 159.9 376.0 179.2 C377.4 198.5 379.1 215.1 381.0 241.0 C382.8 267.0 385.6 311.7 387.0 335.0 C388.3 358.3 388.6 373.3 389.0 381.0 Z"></path>
+<path d="M394.0 387.0 C394.4 379.3 394.4 363.0 396.0 340.8 C397.7 318.5 401.7 277.6 404.0 253.6 C406.4 229.6 408.3 213.9 410.0 196.8 C411.8 179.7 413.8 158.6 414.5 150.9 A16.5 16.5 0 0 1 447.5 153.1 C447.2 160.8 446.5 182.0 446.0 199.2 C445.4 216.4 445.0 232.4 444.0 256.4 C443.0 280.4 441.0 321.1 440.0 343.2 C439.0 365.3 438.3 381.3 438.0 389.0 Z"></path>
+<path d="M439.3 408.6 C440.6 401.2 443.4 382.7 447.4 364.3 C451.4 346.0 459.1 316.5 463.3 298.6 C467.6 280.8 469.9 269.7 472.8 257.2 C475.6 244.7 479.0 229.2 480.2 223.6 A14.0 14.0 0 0 1 507.8 228.4 C507.0 234.2 505.1 250.0 503.2 262.8 C501.4 275.6 499.8 287.2 496.7 305.4 C493.6 323.5 488.0 353.3 484.6 371.7 C481.3 390.0 478.0 408.1 476.7 415.4 Z"></path>
+<path d="M299.2 599.4 C296.0 592.3 291.0 575.2 280.2 556.7 C269.3 538.2 247.1 509.6 234.1 488.4 C221.1 467.1 210.5 447.5 202.2 429.3 C193.9 411.1 187.3 387.4 184.3 379.0 A19.0 19.0 0 0 1 219.7 365.0 C223.0 372.6 230.8 394.6 239.8 410.7 C248.9 426.8 259.3 442.2 273.9 461.6 C288.6 481.1 314.7 508.8 327.8 527.3 C341.0 545.8 348.7 565.0 352.8 572.6 Z"></path>
+</g>
+<g fill="none" stroke="#D9DEE5" stroke-width="1.3" stroke-linecap="round">
+<path d="M296.5 351.6 Q309.6 346.5 323.5 348.4"></path><path d="M285.7 266.6 Q297.5 261.5 310.3 263.4"></path><path d="M279.6 211.3 Q290.6 206.5 302.4 208.7"></path>
+<path d="M349.8 336.6 Q363.8 332.5 378.2 335.4"></path><path d="M347.0 242.6 Q359.8 238.5 373.0 241.4"></path><path d="M345.2 180.5 Q356.9 176.5 368.8 179.5"></path>
+<path d="M404.4 341.2 Q418.2 338.5 431.6 342.8"></path><path d="M411.6 254.1 Q424.2 251.5 436.4 255.9"></path><path d="M416.9 197.2 Q428.2 194.5 439.1 198.8"></path>
+<path d="M454.4 365.7 Q466.7 364.6 477.6 370.3"></path><path d="M469.7 299.9 Q480.7 298.6 490.3 304.1"></path><path d="M478.5 258.3 Q488.6 256.6 497.5 261.7"></path>
+<path d="M289.2 551.1 Q302.2 539.0 318.8 532.9"></path><path d="M241.6 483.3 Q252.1 472.1 266.4 466.7"></path><path d="M209.3 425.8 Q219.5 416.9 232.7 414.2"></path>
+<path d="M492.0 422.0 C485.0 419.7 465.0 411.0 450.0 408.0 C435.0 405.0 417.7 406.0 402.0 404.0 C386.3 402.0 363.7 397.3 356.0 396.0"></path>
+<path d="M288.0 450.0 C295.7 451.0 318.3 453.3 334.0 456.0 C349.7 458.7 364.7 461.7 382.0 466.0 C399.3 470.3 428.7 479.3 438.0 482.0"></path>
+<path d="M316.0 412.0 C319.0 420.0 329.7 442.0 334.0 460.0 C338.3 478.0 339.0 499.0 342.0 520.0 C345.0 541.0 350.3 575.0 352.0 586.0"></path>
+</g>
+<rect x="288" y="620" width="212" height="74" rx="16" fill="#F4F6F8" stroke="#CBD2DB" stroke-width="1.5"></rect>
+<g stroke="#E3E7EC" stroke-width="1.2"><path d="M300 630V680M308 630V680M316 630V680M324 630V680M332 630V680M340 630V680M348 630V680M356 630V680M428 630V680M436 630V680M444 630V680M452 630V680M460 630V680M468 630V680M476 630V680M484 630V680"></path></g>
+<rect x="364" y="637" width="56" height="22" rx="7" fill="#0B0D12"></rect>
+<text x="372" y="651.5" font-family="Geist Mono, monospace" font-size="7.5" letter-spacing=".12em" fill="#FFFFFF">DERMIS</text>
+<circle class="hub-led scn" cx="410" cy="648" r="3.2" fill="#F2551D"></circle>
+</g>
+
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<g stroke="#E2E6EB" stroke-width="1.4">
+<path d="M287.7 178.1 C288.2 183.4 289.3 195.5 291.0 210.0 C292.7 224.5 294.8 241.7 298.0 265.0 C301.2 288.3 308.0 335.8 310.0 350.0 C310.0 410.0 392.0 558.0 392.0 640.0"></path>
+<path d="M355.6 142.6 C355.8 148.8 356.3 163.4 357.0 180.0 C357.7 196.6 358.8 216.0 360.0 242.0 C361.2 268.0 363.3 320.3 364.0 336.0 C364.0 396.0 392.0 558.0 392.0 640.0"></path>
+<path d="M430.0 167.6 C429.6 172.7 429.0 183.4 428.0 198.0 C427.0 212.6 425.7 231.0 424.0 255.0 C422.3 279.0 419.0 327.5 418.0 342.0 C418.0 402.0 392.0 558.0 392.0 640.0"></path>
+<path d="M491.7 239.1 C491.1 242.6 489.9 249.5 488.0 260.0 C486.1 270.5 483.7 284.0 480.0 302.0 C476.3 320.0 468.3 357.0 466.0 368.0 C466.0 428.0 392.0 558.0 392.0 640.0"></path>
+<path d="M208.6 388.8 C210.7 394.0 213.4 405.6 221.0 420.0 C228.6 434.4 240.2 454.7 254.0 475.0 C267.8 495.3 295.7 530.8 304.0 542.0 C304.0 602.0 392.0 558.0 392.0 640.0"></path>
+<path d="M342.0 540.0 C342.0 590.0 392.0 588.0 392.0 640.0"></path>
+</g>
+<g stroke="#F2551D" stroke-width="1.7" stroke-opacity=".85">
+<path class="tc tc1 scn" pathLength="1" d="M287.7 178.1 C288.2 183.4 289.3 195.5 291.0 210.0 C292.7 224.5 294.8 241.7 298.0 265.0 C301.2 288.3 308.0 335.8 310.0 350.0 C310.0 410.0 392.0 558.0 392.0 640.0"></path>
+<path class="tc tc2 scn" pathLength="1" d="M355.6 142.6 C355.8 148.8 356.3 163.4 357.0 180.0 C357.7 196.6 358.8 216.0 360.0 242.0 C361.2 268.0 363.3 320.3 364.0 336.0 C364.0 396.0 392.0 558.0 392.0 640.0"></path>
+<path class="tc tc3 scn" pathLength="1" d="M430.0 167.6 C429.6 172.7 429.0 183.4 428.0 198.0 C427.0 212.6 425.7 231.0 424.0 255.0 C422.3 279.0 419.0 327.5 418.0 342.0 C418.0 402.0 392.0 558.0 392.0 640.0"></path>
+<path class="tc tc4 scn" pathLength="1" d="M491.7 239.1 C491.1 242.6 489.9 249.5 488.0 260.0 C486.1 270.5 483.7 284.0 480.0 302.0 C476.3 320.0 468.3 357.0 466.0 368.0 C466.0 428.0 392.0 558.0 392.0 640.0"></path>
+<path class="tc tc5 scn" pathLength="1" d="M208.6 388.8 C210.7 394.0 213.4 405.6 221.0 420.0 C228.6 434.4 240.2 454.7 254.0 475.0 C267.8 495.3 295.7 530.8 304.0 542.0 C304.0 602.0 392.0 558.0 392.0 640.0"></path>
+<path class="tc tc6 scn" pathLength="1" d="M342.0 540.0 C342.0 590.0 392.0 588.0 392.0 640.0"></path>
+</g>
+</g>
+
+<g class="co co1 scn"><path d="M288 178 L250 128 H168" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="168" cy="128" r="2.5" fill="#0B0D12"></circle><text x="160" y="124" text-anchor="end" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">INDEX</text><text x="160" y="141" text-anchor="end" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">normal + shear</text><path class="spk sp1 scn" pathLength="1" d="M88.0 151.6 L91.0 151.5 L94.0 150.0 L97.0 148.0 L100.0 147.3 L103.0 146.7 L106.0 147.0 L109.0 147.8 L112.0 147.9 L115.0 148.8 L118.0 150.5 L121.0 150.4 L124.0 150.8 L127.0 149.6 L130.0 149.7 L133.0 149.8 L136.0 149.2 L139.0 150.6 L142.0 151.4 L145.0 151.4 L148.0 151.4 L151.0 152.0 L154.0 152.5 L157.0 151.9 L160.0 151.7" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+<g class="co co5 scn"><path d="M209 389 L196 398 H168" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="168" cy="398" r="2.5" fill="#0B0D12"></circle><text x="160" y="394" text-anchor="end" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">THUMB</text><text x="160" y="411" text-anchor="end" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">grip force</text><path class="spk sp5 scn" pathLength="1" d="M88.0 421.5 L91.0 420.9 L94.0 419.3 L97.0 418.9 L100.0 419.6 L103.0 419.4 L106.0 419.4 L109.0 419.0 L112.0 419.2 L115.0 418.8 L118.0 418.1 L121.0 417.0 L124.0 416.9 L127.0 416.8 L130.0 417.5 L133.0 418.8 L136.0 420.1 L139.0 421.1 L142.0 420.9 L145.0 420.7 L148.0 420.4 L151.0 420.4 L154.0 421.0 L157.0 420.8 L160.0 420.9" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+<g class="co co6 scn"><path d="M342 540 L300 618 H168" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="168" cy="618" r="2.5" fill="#0B0D12"></circle><text x="160" y="614" text-anchor="end" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">PALM</text><text x="160" y="631" text-anchor="end" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">palm load</text><path class="spk sp6 scn" pathLength="1" d="M88.0 641.7 L91.0 642.0 L94.0 641.7 L97.0 641.9 L100.0 641.6 L103.0 640.5 L106.0 639.7 L109.0 639.7 L112.0 637.9 L115.0 636.9 L118.0 637.1 L121.0 636.4 L124.0 637.4 L127.0 638.1 L130.0 640.1 L133.0 641.5 L136.0 642.2 L139.0 642.4 L142.0 642.0 L145.0 642.3 L148.0 642.2 L151.0 641.5 L154.0 642.3 L157.0 642.1 L160.0 641.8" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+<g class="co co2 scn"><path d="M356 143 L398 96 H592" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="592" cy="96" r="2.5" fill="#0B0D12"></circle><text x="600" y="92" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">MIDDLE</text><text x="600" y="109" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">slip</text><path class="spk sp2 scn" pathLength="1" d="M600.0 123.7 L603.0 123.5 L606.0 123.9 L609.0 123.3 L612.0 121.8 L615.0 120.3 L618.0 118.7 L621.0 116.4 L624.0 114.8 L627.0 113.6 L630.0 114.6 L633.0 116.2 L636.0 119.1 L639.0 122.8 L642.0 123.7 L645.0 124.5 L648.0 124.4 L651.0 124.4 L654.0 124.4 L657.0 123.6 L660.0 123.8 L663.0 124.2 L666.0 124.3 L669.0 124.4 L672.0 124.5" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+<g class="co co3 scn"><path d="M430 168 L452 172 H592" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="592" cy="172" r="2.5" fill="#0B0D12"></circle><text x="600" y="168" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">RING</text><text x="600" y="185" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">shear</text><path class="spk sp3 scn" pathLength="1" d="M600.0 200.1 L603.0 200.3 L606.0 200.0 L609.0 198.8 L612.0 196.6 L615.0 194.6 L618.0 191.7 L621.0 191.1 L624.0 191.6 L627.0 192.6 L630.0 195.4 L633.0 197.8 L636.0 200.0 L639.0 199.7 L642.0 200.1 L645.0 200.1 L648.0 199.4 L651.0 199.7 L654.0 199.7 L657.0 200.5 L660.0 200.3 L663.0 199.6 L666.0 199.7 L669.0 198.8 L672.0 200.1" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+<g class="co co4 scn"><path d="M492 239 L512 244 H592" fill="none" stroke="#9AA1AC" stroke-width="1"></path><circle cx="592" cy="244" r="2.5" fill="#0B0D12"></circle><text x="600" y="240" font-family="Geist Mono, monospace" font-size="11" font-weight="600" letter-spacing=".08em" fill="#0B0D12">LITTLE</text><text x="600" y="257" font-family="Geist, sans-serif" font-size="13" fill="#5C6370">contact</text><path class="spk sp4 scn" pathLength="1" d="M600.0 272.4 L603.0 272.2 L606.0 270.9 L609.0 269.2 L612.0 267.5 L615.0 267.1 L618.0 266.3 L621.0 267.0 L624.0 267.7 L627.0 270.2 L630.0 271.7 L633.0 272.4 L636.0 272.3 L639.0 271.9 L642.0 272.0 L645.0 272.2 L648.0 271.6 L651.0 272.1 L654.0 272.4 L657.0 271.7 L660.0 271.7 L663.0 270.9 L666.0 271.1 L669.0 271.0 L672.0 271.5" fill="none" stroke="#F2551D" stroke-width="1.6" stroke-linejoin="round"></path></g>
+
+<path class="ping pg6 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path>
+<g class="pod pd6 scn"><path class="halo ha6 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path><path class="core cr6 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path><path fill="url(#taxel)" d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path></g>
+<path class="ping pg5 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path>
+<g class="pod pd5 scn"><path class="halo ha5 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path><path class="core cr5 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path><path fill="url(#taxel)" d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path></g>
+<path class="ping pg1 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path>
+<g class="pod pd1 scn"><path class="halo ha1 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path><path class="core cr1 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path><path fill="url(#taxel)" d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path></g>
+<path class="ping pg2 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path>
+<g class="pod pd2 scn"><path class="halo ha2 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path><path class="core cr2 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path><path fill="url(#taxel)" d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path></g>
+<path class="ping pg3 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path>
+<g class="pod pd3 scn"><path class="halo ha3 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path><path class="core cr3 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path><path fill="url(#taxel)" d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path></g>
+<path class="ping pg4 scn" fill="none" stroke="#F2551D" stroke-width="2" opacity="0" d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path>
+<g class="pod pd4 scn"><path class="halo ha4 scn" fill="none" stroke="#F2551D" stroke-width="12" stroke-linejoin="round" opacity=".14" d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path><path class="core cr4 scn" fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5" stroke-linejoin="round" d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path><path fill="url(#taxel)" d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path></g>
+</svg>
+</div>
+</div>
+</div>
+<div class="hint scn" aria-hidden="true"><span>Scroll</span><i></i></div>
+</div>
+</section>
+
+<section id="problem" class="sec alt" aria-labelledby="problem-title">
+<div class="wrap">
+<p class="label"><b>01</b><span class="ln"></span>The problem</p>
+<h2 id="problem-title" class="statement"><span class="ink1">Touch recorded on a human hand</span> <span class="ink2">doesn’t transfer to a robot hand.</span></h2>
+<p class="lede" style="max-width:760px;margin-top:24px">Robots learn to grip by copying human demonstrations. But the glove on the person and the sensors on the robot measure touch in different ways and different units, so what the person felt never reaches the robot.</p>
+
+<div class="evid">
+<div class="sec-head rv" style="gap:16px">
+<h3 class="h3" style="font-size:32px">Touch is the missing modality.</h3>
+<p class="body">In recent studies, robot policies that use touch beat the same policies without it by 16 to 64 percentage points on contact-heavy tasks. The gains are largest where grip force and slip decide the outcome.</p>
+</div>
+<div class="rv2">
+<div class="legend"><span><i class="sw" style="background:#C5CAD2"></i>Without touch</span><span><i class="sw" style="background:#F2551D"></i>With touch</span><span>Task success</span></div>
+<div class="bars">
+<div class="bar-row">
+<div class="bar-name">Key removal<small>35% → 99%</small></div>
+<div class="track"><div class="b v grow" style="width:35%"></div><div class="b t grow" style="width:99%"></div></div>
+<div class="delta">+64</div>
+</div>
+<div class="bar-row">
+<div class="bar-name">Contact tasks, simulated<small>30.9% → 83.1% avg</small></div>
+<div class="track"><div class="b v grow" style="width:30.9%"></div><div class="b t grow" style="width:83.1%"></div></div>
+<div class="delta">+52</div>
+</div>
+<div class="bar-row">
+<div class="bar-name">Plug insertion<small>60% → 85%</small></div>
+<div class="track"><div class="b v grow" style="width:60%"></div><div class="b t grow" style="width:85%"></div></div>
+<div class="delta">+25</div>
+</div>
+<div class="bar-row">
+<div class="bar-name">Wiping<small>55.8% → 71.7%</small></div>
+<div class="track"><div class="b v grow" style="width:55.8%"></div><div class="b t grow" style="width:71.7%"></div></div>
+<div class="delta">+16</div>
+</div>
+</div>
+<p class="src">Key removal and plug insertion: NeoteAI and Fudan’s VTLA vs. vision-only, reported by <a href="https://www.besthub.dev/articles/how-30-000-hours-of-tactile-data-give-embodied-ai-a-real-sense-of-touch-04edbb812121">BestHub (Jul 2026)</a>. Simulated contact tasks: N0-VTLA vs. vision-only ACT, <a href="https://arxiv.org/abs/2607.23782">arXiv 2607.23782</a>. Wiping: OSMO glove vs. vision + proprioception, <a href="https://arxiv.org/abs/2512.08920">arXiv 2512.08920</a>. Baselines differ by study.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section id="idea" class="sec" aria-labelledby="idea-title">
+<div class="wrap">
+<div class="sec-head rv">
+<p class="label"><b>02</b><span class="ln"></span>Idea</p>
+<h2 id="idea-title" class="h2">The matched touch layer.</h2>
+<p class="lede">One modular pod system for both hands. The pod on your demonstrator’s glove is the same part as the pod on your robot — same skin, same magnet, same calibration — so touch recorded by people reads the same on the robot.</p>
+</div>
+
+<div class="twin">
+<article class="tcard rv">
+<div class="tcard-h"><span>Human side</span><span class="tag h">Dermis Glove</span></div>
+<svg class="hand hand-lg" viewBox="170 96 356 600" role="img" aria-label="Dermis glove with sensing patches on every fingertip and the palm">
+<defs>
+<linearGradient id="gHand2" gradientUnits="userSpaceOnUse" x1="0" y1="110" x2="0" y2="680"><stop offset="0" stop-color="#FFFFFF"></stop><stop offset="1" stop-color="#EDF0F3"></stop></linearGradient>
+<pattern id="taxel2" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.15" fill="#FFFFFF" opacity=".5"></circle></pattern>
+</defs>
+<g fill="#CBD2DB" stroke="#CBD2DB" stroke-width="3" stroke-linejoin="round">
+<path d="M312.0 666.0 C310.7 659.0 307.7 639.7 304.0 624.0 C300.3 608.3 294.0 588.0 290.0 572.0 C286.0 556.0 281.7 543.0 280.0 528.0 C278.3 513.0 279.0 498.3 280.0 482.0 C281.0 465.7 283.7 446.7 286.0 430.0 C288.3 413.3 290.0 394.7 294.0 382.0 C298.0 369.3 302.0 361.3 310.0 354.0 C318.0 346.7 328.7 342.0 342.0 338.0 C355.3 334.0 373.7 329.7 390.0 330.0 C406.3 330.3 426.3 335.3 440.0 340.0 C453.7 344.7 463.7 351.0 472.0 358.0 C480.3 365.0 485.7 369.7 490.0 382.0 C494.3 394.3 496.3 414.0 498.0 432.0 C499.7 450.0 500.7 470.0 500.0 490.0 C499.3 510.0 497.0 531.7 494.0 552.0 C491.0 572.3 485.3 593.0 482.0 612.0 C478.7 631.0 475.3 657.0 474.0 666.0 Z"></path>
+<path d="M292.1 394.1 C291.4 387.2 290.5 373.7 288.2 352.6 C285.8 331.5 280.8 291.1 278.2 267.7 C275.6 244.3 274.1 229.4 272.6 212.1 C271.1 194.8 269.7 171.8 269.1 163.8 A17.0 17.0 0 0 1 302.9 160.2 C304.0 168.2 306.9 190.9 309.4 207.9 C311.9 224.9 314.1 239.1 317.8 262.3 C321.6 285.6 328.8 326.2 331.8 347.4 C334.9 368.7 335.2 382.8 335.9 389.9 Z"></path>
+<path d="M343.0 383.0 C342.7 375.3 341.7 360.3 341.0 337.0 C340.4 313.6 339.5 269.0 339.0 243.0 C338.5 216.9 338.3 200.2 338.0 180.8 C337.8 161.4 337.6 135.7 337.5 126.6 A17.5 17.5 0 0 1 372.5 125.4 C373.1 134.3 374.6 159.9 376.0 179.2 C377.4 198.5 379.1 215.1 381.0 241.0 C382.8 267.0 385.6 311.7 387.0 335.0 C388.3 358.3 388.6 373.3 389.0 381.0 Z"></path>
+<path d="M394.0 387.0 C394.4 379.3 394.4 363.0 396.0 340.8 C397.7 318.5 401.7 277.6 404.0 253.6 C406.4 229.6 408.3 213.9 410.0 196.8 C411.8 179.7 413.8 158.6 414.5 150.9 A16.5 16.5 0 0 1 447.5 153.1 C447.2 160.8 446.5 182.0 446.0 199.2 C445.4 216.4 445.0 232.4 444.0 256.4 C443.0 280.4 441.0 321.1 440.0 343.2 C439.0 365.3 438.3 381.3 438.0 389.0 Z"></path>
+<path d="M439.3 408.6 C440.6 401.2 443.4 382.7 447.4 364.3 C451.4 346.0 459.1 316.5 463.3 298.6 C467.6 280.8 469.9 269.7 472.8 257.2 C475.6 244.7 479.0 229.2 480.2 223.6 A14.0 14.0 0 0 1 507.8 228.4 C507.0 234.2 505.1 250.0 503.2 262.8 C501.4 275.6 499.8 287.2 496.7 305.4 C493.6 323.5 488.0 353.3 484.6 371.7 C481.3 390.0 478.0 408.1 476.7 415.4 Z"></path>
+<path d="M299.2 599.4 C296.0 592.3 291.0 575.2 280.2 556.7 C269.3 538.2 247.1 509.6 234.1 488.4 C221.1 467.1 210.5 447.5 202.2 429.3 C193.9 411.1 187.3 387.4 184.3 379.0 A19.0 19.0 0 0 1 219.7 365.0 C223.0 372.6 230.8 394.6 239.8 410.7 C248.9 426.8 259.3 442.2 273.9 461.6 C288.6 481.1 314.7 508.8 327.8 527.3 C341.0 545.8 348.7 565.0 352.8 572.6 Z"></path>
+</g>
+<g fill="url(#gHand2)">
+<path d="M312.0 666.0 C310.7 659.0 307.7 639.7 304.0 624.0 C300.3 608.3 294.0 588.0 290.0 572.0 C286.0 556.0 281.7 543.0 280.0 528.0 C278.3 513.0 279.0 498.3 280.0 482.0 C281.0 465.7 283.7 446.7 286.0 430.0 C288.3 413.3 290.0 394.7 294.0 382.0 C298.0 369.3 302.0 361.3 310.0 354.0 C318.0 346.7 328.7 342.0 342.0 338.0 C355.3 334.0 373.7 329.7 390.0 330.0 C406.3 330.3 426.3 335.3 440.0 340.0 C453.7 344.7 463.7 351.0 472.0 358.0 C480.3 365.0 485.7 369.7 490.0 382.0 C494.3 394.3 496.3 414.0 498.0 432.0 C499.7 450.0 500.7 470.0 500.0 490.0 C499.3 510.0 497.0 531.7 494.0 552.0 C491.0 572.3 485.3 593.0 482.0 612.0 C478.7 631.0 475.3 657.0 474.0 666.0 Z"></path>
+<path d="M292.1 394.1 C291.4 387.2 290.5 373.7 288.2 352.6 C285.8 331.5 280.8 291.1 278.2 267.7 C275.6 244.3 274.1 229.4 272.6 212.1 C271.1 194.8 269.7 171.8 269.1 163.8 A17.0 17.0 0 0 1 302.9 160.2 C304.0 168.2 306.9 190.9 309.4 207.9 C311.9 224.9 314.1 239.1 317.8 262.3 C321.6 285.6 328.8 326.2 331.8 347.4 C334.9 368.7 335.2 382.8 335.9 389.9 Z"></path>
+<path d="M343.0 383.0 C342.7 375.3 341.7 360.3 341.0 337.0 C340.4 313.6 339.5 269.0 339.0 243.0 C338.5 216.9 338.3 200.2 338.0 180.8 C337.8 161.4 337.6 135.7 337.5 126.6 A17.5 17.5 0 0 1 372.5 125.4 C373.1 134.3 374.6 159.9 376.0 179.2 C377.4 198.5 379.1 215.1 381.0 241.0 C382.8 267.0 385.6 311.7 387.0 335.0 C388.3 358.3 388.6 373.3 389.0 381.0 Z"></path>
+<path d="M394.0 387.0 C394.4 379.3 394.4 363.0 396.0 340.8 C397.7 318.5 401.7 277.6 404.0 253.6 C406.4 229.6 408.3 213.9 410.0 196.8 C411.8 179.7 413.8 158.6 414.5 150.9 A16.5 16.5 0 0 1 447.5 153.1 C447.2 160.8 446.5 182.0 446.0 199.2 C445.4 216.4 445.0 232.4 444.0 256.4 C443.0 280.4 441.0 321.1 440.0 343.2 C439.0 365.3 438.3 381.3 438.0 389.0 Z"></path>
+<path d="M439.3 408.6 C440.6 401.2 443.4 382.7 447.4 364.3 C451.4 346.0 459.1 316.5 463.3 298.6 C467.6 280.8 469.9 269.7 472.8 257.2 C475.6 244.7 479.0 229.2 480.2 223.6 A14.0 14.0 0 0 1 507.8 228.4 C507.0 234.2 505.1 250.0 503.2 262.8 C501.4 275.6 499.8 287.2 496.7 305.4 C493.6 323.5 488.0 353.3 484.6 371.7 C481.3 390.0 478.0 408.1 476.7 415.4 Z"></path>
+<path d="M299.2 599.4 C296.0 592.3 291.0 575.2 280.2 556.7 C269.3 538.2 247.1 509.6 234.1 488.4 C221.1 467.1 210.5 447.5 202.2 429.3 C193.9 411.1 187.3 387.4 184.3 379.0 A19.0 19.0 0 0 1 219.7 365.0 C223.0 372.6 230.8 394.6 239.8 410.7 C248.9 426.8 259.3 442.2 273.9 461.6 C288.6 481.1 314.7 508.8 327.8 527.3 C341.0 545.8 348.7 565.0 352.8 572.6 Z"></path>
+</g>
+<g fill="none" stroke="#D9DEE5" stroke-width="1.3" stroke-linecap="round">
+<path d="M296.5 351.6 Q309.6 346.5 323.5 348.4"></path><path d="M285.7 266.6 Q297.5 261.5 310.3 263.4"></path>
+<path d="M349.8 336.6 Q363.8 332.5 378.2 335.4"></path><path d="M347.0 242.6 Q359.8 238.5 373.0 241.4"></path>
+<path d="M404.4 341.2 Q418.2 338.5 431.6 342.8"></path><path d="M411.6 254.1 Q424.2 251.5 436.4 255.9"></path>
+<path d="M454.4 365.7 Q466.7 364.6 477.6 370.3"></path><path d="M469.7 299.9 Q480.7 298.6 490.3 304.1"></path>
+<path d="M289.2 551.1 Q302.2 539.0 318.8 532.9"></path><path d="M241.6 483.3 Q252.1 472.1 266.4 466.7"></path>
+</g>
+<rect x="288" y="620" width="212" height="74" rx="16" fill="#F4F6F8" stroke="#CBD2DB" stroke-width="1.5"></rect>
+<g stroke="#E3E7EC" stroke-width="1.2"><path d="M300 630V684M308 630V684M316 630V684M324 630V684M332 630V684M340 630V684M348 630V684M356 630V684M428 630V684M436 630V684M444 630V684M452 630V684M460 630V684M468 630V684M476 630V684M484 630V684"></path></g>
+<g fill="none" stroke="#F2551D" stroke-width="1.7" stroke-opacity=".85" stroke-linecap="round" stroke-linejoin="round">
+<path d="M287.7 178.1 C288.2 183.4 289.3 195.5 291.0 210.0 C292.7 224.5 294.8 241.7 298.0 265.0 C301.2 288.3 308.0 335.8 310.0 350.0 C310.0 410.0 392.0 558.0 392.0 640.0"></path>
+<path d="M355.6 142.6 C355.8 148.8 356.3 163.4 357.0 180.0 C357.7 196.6 358.8 216.0 360.0 242.0 C361.2 268.0 363.3 320.3 364.0 336.0 C364.0 396.0 392.0 558.0 392.0 640.0"></path>
+<path d="M430.0 167.6 C429.6 172.7 429.0 183.4 428.0 198.0 C427.0 212.6 425.7 231.0 424.0 255.0 C422.3 279.0 419.0 327.5 418.0 342.0 C418.0 402.0 392.0 558.0 392.0 640.0"></path>
+<path d="M491.7 239.1 C491.1 242.6 489.9 249.5 488.0 260.0 C486.1 270.5 483.7 284.0 480.0 302.0 C476.3 320.0 468.3 357.0 466.0 368.0 C466.0 428.0 392.0 558.0 392.0 640.0"></path>
+<path d="M208.6 388.8 C210.7 394.0 213.4 405.6 221.0 420.0 C228.6 434.4 240.2 454.7 254.0 475.0 C267.8 495.3 295.7 530.8 304.0 542.0 C304.0 602.0 392.0 558.0 392.0 640.0"></path>
+</g>
+<rect x="364" y="637" width="56" height="22" rx="7" fill="#0B0D12"></rect>
+<text x="372" y="651.5" font-family="Geist Mono, monospace" font-size="7.5" letter-spacing=".12em" fill="#FFFFFF">DERMIS</text>
+<circle cx="410" cy="648" r="3.2" fill="#F2551D"></circle>
+<g stroke-linejoin="round">
+<g fill="none" stroke="#F2551D" stroke-width="12" opacity=".14">
+<path d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path>
+<path d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path>
+<path d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path>
+<path d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path>
+<path d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path>
+<path d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path>
+</g>
+<g fill="#F2551D" stroke="#FFFFFF" stroke-width="1.5">
+<path d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path>
+<path d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path>
+<path d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path>
+<path d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path>
+<path d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path>
+<path d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path>
+</g>
+<g fill="url(#taxel2)">
+<path d="M318.0 432.0 C329.7 418.3 353.3 421.7 372.0 420.0 C390.7 418.3 413.0 419.0 430.0 422.0 C447.0 425.0 464.7 426.3 474.0 438.0 C483.3 449.7 485.0 473.7 486.0 492.0 C487.0 510.3 484.0 531.7 480.0 548.0 C476.0 564.3 475.3 580.7 462.0 590.0 C448.7 599.3 420.0 603.0 400.0 604.0 C380.0 605.0 356.7 603.0 342.0 596.0 C327.3 589.0 318.7 577.7 312.0 562.0 C305.3 546.3 301.0 523.7 302.0 502.0 C303.0 480.3 306.3 445.7 318.0 432.0 Z"></path>
+<path d="M203.4 421.6 L187.6 377.7 A15.5 15.5 0 0 1 216.4 366.3 L235.0 409.1 Q221.0 420.0 203.4 421.6 Z"></path>
+<path d="M276.1 206.5 L272.6 163.4 A13.5 13.5 0 0 1 299.4 160.6 L304.9 203.5 Q291.0 210.0 276.1 206.5 Z"></path>
+<path d="M341.8 175.6 L341.0 126.5 A14.0 14.0 0 0 1 369.0 125.5 L371.8 174.4 Q357.0 180.0 341.8 175.6 Z"></path>
+<path d="M414.4 192.1 L418.0 151.2 A13.0 13.0 0 0 1 444.0 152.8 L442.3 193.9 Q428.0 198.0 414.4 192.1 Z"></path>
+<path d="M477.5 253.1 L483.7 224.2 A10.5 10.5 0 0 1 504.3 227.8 L500.2 257.1 Q488.0 260.0 477.5 253.1 Z"></path>
+</g>
+</g>
+</svg>
+<p class="body">Sensing patches on every fingertip and the palm, on a thin stretch liner, synced with webcam or VR hand tracking.</p>
+</article>
+
+<div class="conn rv2">
+<p class="conn-k">Twin pair</p>
+<p class="conn-t">Same contact. Same newtons.</p>
+<div class="loopbox" aria-hidden="true">
+<svg viewBox="0 0 300 80" width="100%" height="80" preserveAspectRatio="none">
+<g class="loop" fill="none" stroke-width="2" stroke-linejoin="round">
+<path stroke="#F2551D" d="M0 52L5 46L10 42L15 41L20 39L25 41L30 44L35 46L40 47L45 47L50 44L55 37L60 27L65 18L70 11L75 8L80 8L85 11L90 17L95 22L100 26L105 26L110 26L115 25L120 21L125 19L130 20L135 19L140 23L145 29L150 37L155 46L160 54L165 61L170 64L175 63L180 61L185 59L190 57L195 57L200 60L205 61L210 67L215 71L220 75L225 76L230 76L235 71L240 68L245 62L250 59L255 56L260 58L265 58L270 62L275 65L280 65L285 64L290 63L295 58L300 52L305 47L310 42L315 40L320 39L325 41L330 43L335 46L340 47L345 47L350 44L355 36L360 27L365 18L370 11L375 8L380 9L385 13L390 17L395 21L400 25L405 27L410 26L415 26L420 23L425 20L430 19L435 19L440 22L445 28L450 36L455 46L460 55L465 61L470 62L475 64L480 62L485 59L490 57L495 57L500 59L505 63L510 68L515 73L520 75L525 77L530 75L535 71L540 66L545 62L550 59L555 56L560 57L565 58L570 62L575 65L580 66L585 64L590 63L595 58L600 52"></path>
+<path stroke="#6E92FF" d="M0 52L5 48L10 44L15 42L20 42L25 42L30 44L35 46L40 49L45 48L50 45L55 38L60 29L65 22L70 14L75 12L80 12L85 14L90 20L95 23L100 27L105 29L110 29L115 27L120 26L125 22L130 21L135 21L140 24L145 31L150 38L155 48L160 54L165 60L170 64L175 64L180 63L185 59L190 57L195 58L200 60L205 64L210 68L215 70L220 74L225 75L230 74L235 72L240 66L245 63L250 60L255 57L260 57L265 59L270 63L275 65L280 66L285 65L290 62L295 59L300 54L305 48L310 45L315 42L320 40L325 42L330 44L335 46L340 49L345 48L350 46L355 38L360 28L365 20L370 13L375 11L380 12L385 15L390 19L395 23L400 28L405 29L410 28L415 27L420 24L425 22L430 20L435 22L440 26L445 30L450 39L455 48L460 54L465 60L470 63L475 63L480 61L485 59L490 58L495 57L500 60L505 63L510 67L515 72L520 74L525 76L530 74L535 71L540 67L545 64L550 60L555 59L560 58L565 59L570 61L575 63L580 66L585 66L590 62L595 58L600 55"></path>
+</g>
+</svg>
+</div>
+<p class="conn-d">Paired location by location and pressed with the same load on our rig. Every kit ships with its measured twin gap.</p>
+</div>
+
+<article class="tcard rv3">
+<div class="tcard-h"><span>Robot side</span><span class="tag r">Dermis Pods</span></div>
+<svg class="hand" viewBox="0 0 260 300" role="img" aria-label="Robot hand with identical Dermis pods on each fingertip and the palm">
+<rect x="98" y="262" width="64" height="30" rx="6" fill="#E3E7EE" stroke="#C3CBD6"></rect>
+<g transform="rotate(-58 70 232)">
+<rect x="57" y="190" width="26" height="38" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="57" y="148" width="26" height="36" rx="10" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<circle cx="70" cy="187" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle>
+<circle class="pod-dot pulse p4" cx="70" cy="156" r="8" fill="#2457F5" opacity=".3"></circle>
+<circle cx="70" cy="156" r="8" fill="#2457F5" stroke="#FFFFFF" stroke-width="2.5"></circle>
+</g>
+<rect x="66" y="150" width="128" height="116" rx="16" fill="#EEF1F5" stroke="#C3CBD6"></rect>
+<circle cx="80" cy="164" r="2.2" fill="#C3CBD6"></circle><circle cx="180" cy="164" r="2.2" fill="#C3CBD6"></circle><circle cx="80" cy="252" r="2.2" fill="#C3CBD6"></circle><circle cx="180" cy="252" r="2.2" fill="#C3CBD6"></circle>
+<rect x="108" y="198" width="44" height="26" rx="10" fill="#2457F5"></rect>
+<g transform="rotate(-6 92 150)">
+<rect x="79" y="106" width="26" height="38" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="79" y="64" width="26" height="36" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="79" y="26" width="26" height="32" rx="10" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<circle cx="92" cy="147" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="92" cy="103" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="92" cy="61" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle>
+<circle class="pod-dot pulse" cx="92" cy="35" r="8" fill="#2457F5" opacity=".3"></circle>
+<circle cx="92" cy="35" r="8" fill="#2457F5" stroke="#FFFFFF" stroke-width="2.5"></circle>
+</g>
+<g>
+<rect x="117" y="106" width="26" height="38" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="117" y="64" width="26" height="36" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="117" y="20" width="26" height="38" rx="10" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<circle cx="130" cy="147" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="130" cy="103" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="130" cy="61" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle>
+<circle class="pod-dot pulse p2" cx="130" cy="29" r="8" fill="#2457F5" opacity=".3"></circle>
+<circle cx="130" cy="29" r="8" fill="#2457F5" stroke="#FFFFFF" stroke-width="2.5"></circle>
+</g>
+<g transform="rotate(6 168 150)">
+<rect x="155" y="106" width="26" height="38" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="155" y="64" width="26" height="36" rx="8" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<rect x="155" y="28" width="26" height="30" rx="10" fill="#F6F7F9" stroke="#C3CBD6"></rect>
+<circle cx="168" cy="147" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="168" cy="103" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle><circle cx="168" cy="61" r="4.5" fill="#FFFFFF" stroke="#9AA1AC" stroke-width="1.5"></circle>
+<circle class="pod-dot pulse p3" cx="168" cy="37" r="8" fill="#2457F5" opacity=".3"></circle>
+<circle cx="168" cy="37" r="8" fill="#2457F5" stroke="#FFFFFF" stroke-width="2.5"></circle>
+</g>
+</svg>
+<p class="body">Identical pods on mounts for your robot hand — or sold alone, to match glove data you already collect.</p>
+</article>
+</div>
+
+<div class="sub-head rv">
+<p class="label"><span class="ln"></span>What makes it different</p>
+<p class="tag-line">Change the skin, <em>keep the newtons</em> — matched on glove and robot.</p>
+</div>
+<div class="usps rv">
+<article class="usp">
+<span class="usp-i"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 11a7 7 0 1 1-2.05-4.95"></path><path d="M18 4v4h-4"></path><path d="M8 11.5l2 2 4-4.5"></path></svg></span>
+<span class="usp-n">01</span>
+<h4>Self-calibrating</h4>
+<p class="body">Change a skin, run a short check with known weights, and you’re back in newtons in minutes — no lab rig, no vendor visit. Each pod checks its own baseline at power-on and flags drift before it ruins a dataset.</p>
+</article>
+<article class="usp">
+<span class="usp-i"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="13" r="6"></circle><path d="M11 3v4M8 5l3-2 3 2"></path></svg></span>
+<span class="usp-n">02</span>
+<h4>Replaceable pods</h4>
+<p class="body">Skins and pods snap on and off. Each carries its own ID and calibration, so a worn skin is a quick part swap, not a lost dataset.</p>
+</article>
+<article class="usp">
+<span class="usp-i"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="12" width="16" height="6" rx="2"></rect><path d="M6 12V9a5 5 0 0 1 10 0v3"></path></svg></span>
+<span class="usp-n">03</span>
+<h4>Modular or custom-built</h4>
+<p class="body">One sensor core, any cap: fingertips, palms, gripper jaws or tool handles. Use tested caps for popular hands, or design your own to our open mount spec.</p>
+</article>
+<article class="usp">
+<span class="usp-i"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 2.5l7.5 4.2v8.6L11 19.5l-7.5-4.2V6.7z"></path><path d="M11 11l7.5-4.3M11 11v8.5M11 11L3.5 6.7"></path></svg></span>
+<span class="usp-n">04</span>
+<h4>All in one</h4>
+<p class="body">Glove, robot pods, hub, calibration and software in one kit, matched from one design. No stitching vendors together.</p>
+</article>
+</div>
+
+<div class="tbl-wrap rv">
+<table class="tbl">
+<thead>
+<tr><th scope="col">Who</th><th scope="col">Human glove</th><th scope="col">Robot skin you can buy</th><th scope="col">Calibrated as a matched pair</th><th scope="col">Recalibrate yourself after a change</th></tr>
+</thead>
+<tbody>
+<tr><th scope="row">Tactile data companies<small>e.g. 6thSense: sells data; glove stays in-house</small></th><td><span class="y">In-house only</span></td><td><span class="n">—</span></td><td><span class="n">—</span></td><td><span class="p">Doesn’t apply</span></td></tr>
+<tr><th scope="row">Robot-side tactile sensors<small>e.g. XELA uSkin; no human-side device</small></th><td><span class="n">—</span></td><td><span class="y">Yes</span></td><td><span class="n">—</span></td><td><span class="p">Per-sensor calibration is a paid add-on</span></td></tr>
+<tr><th scope="row">Robot hands with built-in skin<small>e.g. Proception ProHand and ProGlove</small></th><td><span class="p">Same skin as their hand; sale not announced</span></td><td><span class="p">Only on their own hand</span></td><td><span class="p">Same skin; no calibration published</span></td><td><span class="p">Not published</span></td></tr>
+<tr><th scope="row">Open-source magnetic skins<small>e.g. AnySkin, eFlesh, OSMO</small></th><td><span class="p">Build it yourself</span></td><td><span class="p">Build it yourself</span></td><td><span class="p">Left to each lab</span></td><td><span class="p">Left to each lab</span></td></tr>
+<tr class="us"><th scope="row">Dermis<small>The matched touch layer</small></th><td><span class="y"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"></path></svg>Yes</span></td><td><span class="y"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"></path></svg>Yes, also sold alone</span></td><td><span class="y"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"></path></svg>Yes, per kit</span></td><td><span class="y"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5l3.2 3L13 4.5"></path></svg>Yes, in minutes</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sub-head rv">
+<p class="label"><span class="ln"></span>Why it matters</p>
+<p class="tag-line">Every recording keeps each skin’s calibration ID, so data captured on a Dermis glove replays on any robot wearing Dermis pods.</p>
+</div>
+<div class="impact">
+<div class="fly rv">
+<svg class="fly-ring" viewBox="0 0 520 520" aria-hidden="true">
+<circle class="flow-a" cx="260" cy="260" r="170" fill="none" stroke="#B9C0CB" stroke-width="1.5" stroke-dasharray="3 7"></circle>
+<g fill="none" stroke="#0B0D12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M-6 -7 L4 0 L-6 7" transform="translate(380 140) rotate(45)"></path>
+<path d="M-6 -7 L4 0 L-6 7" transform="translate(380 380) rotate(135)"></path>
+<path d="M-6 -7 L4 0 L-6 7" transform="translate(140 380) rotate(225)"></path>
+<path d="M-6 -7 L4 0 L-6 7" transform="translate(140 140) rotate(315)"></path>
+</g>
+</svg>
+<div class="fc"><p class="fc-t">The Dermis flywheel</p><p class="fc-d">more robots ⇄ more data</p></div>
+<div class="fn fn-1"><b>01</b>Teams record demonstrations on Dermis gloves</div>
+<div class="fn fn-2"><b>02</b>Every session carries calibrated newtons and skin IDs</div>
+<div class="fn fn-3"><b>03</b>Any robot wearing Dermis pods replays the data as-is</div>
+<div class="fn fn-4"><b>04</b>Each new Dermis robot makes every dataset worth more</div>
+</div>
+<div class="imp-list">
+<div class="imp rv"><span class="imp-n">01</span><div><h4>Human demos become robot-ready</h4><p class="body">The touch half of human demonstrations finally transfers to the robot, not just the motion.</p></div></div>
+<div class="imp rv"><span class="imp-n">02</span><div><h4>Touch becomes a standard modality</h4><p class="body">Calibrated units and open exports instead of one lab’s private format.</p></div></div>
+<div class="imp rv"><span class="imp-n">03</span><div><h4>Ground truth for vision-to-touch</h4><p class="body">Models that infer touch from video still need measured touch to train on and be checked against.</p></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<section id="how" class="sec alt" aria-labelledby="how-title">
+<div class="wrap">
+<div class="sec-head rv">
+<p class="label"><b>03</b><span class="ln"></span>How it works</p>
+<h2 id="how-title" class="h2">Four steps, one session format.</h2>
+</div>
+<ol class="flow">
+<li class="rv"><span class="flow-n">01</span><h4>Capture</h4><p>Record demonstrations with the Dermis glove, synced with video and hand pose.</p></li>
+<li class="rv"><span class="flow-n">02</span><h4>Calibrate</h4><p>Every pod reads in newtons, and each skin carries its own ID and calibration.</p></li>
+<li class="rv2"><span class="flow-n">03</span><h4>Pair</h4><p>Robot pods match the glove location by location, with a measured twin gap.</p></li>
+<li class="rv2"><span class="flow-n">04</span><h4>Transfer</h4><p>Export to LeRobot or MCAP and run the policy on a robot that feels the same way.</p></li>
+</ol>
+<div class="specs rv">
+<div class="spec"><span class="spec-k">Force</span><span class="spec-v">3-axis</span><span class="spec-d">Normal + shear, in N</span></div>
+<div class="spec"><span class="spec-k">Sampling</span><span class="spec-v">≥200 Hz</span><span class="spec-d">All pods in sync</span></div>
+<div class="spec"><span class="spec-k">Twin gap</span><span class="spec-v">≤10%</span><span class="spec-d">Glove vs. robot pod</span></div>
+<div class="spec"><span class="spec-k">Unit spread</span><span class="spec-v">≤6%</span><span class="spec-d">Per batch</span></div>
+<div class="spec"><span class="spec-k">Skin swap</span><span class="spec-v">≤60 s</span><span class="spec-d">Check included</span></div>
+<div class="spec"><span class="spec-k">Skin life</span><span class="spec-v">≥50k</span><span class="spec-d">Presses</span></div>
+</div>
+<p class="fine" style="margin-top:14px">Founding Kit targets, measured and published per kit.</p>
+</div>
+</section>
+
+<section id="product" class="sec" aria-labelledby="product-title">
+<div class="wrap">
+<div class="sec-head rv">
+<p class="label"><b>04</b><span class="ln"></span>Product</p>
+<h2 id="product-title" class="h2">Dermis Twin Kit.</h2>
+<p class="lede">Calibrated 3-axis touch for the human demonstrator and the robot hand that learns from them. Everything a lab needs to capture, calibrate and export matched touch data.</p>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Twin Kit components">
+<button type="button" role="tab" class="{{tabGloveCls}}" aria-selected="{{isGlove}}" onClick="{{pickGlove}}">Glove</button>
+<button type="button" role="tab" class="{{tabRobotCls}}" aria-selected="{{isRobot}}" onClick="{{pickRobot}}">Robot pods</button>
+<button type="button" role="tab" class="{{tabHubCls}}" aria-selected="{{isHub}}" onClick="{{pickHub}}">Hub</button>
+<button type="button" role="tab" class="{{tabStudioCls}}" aria-selected="{{isStudio}}" onClick="{{pickStudio}}">Studio &amp; SDK</button>
+</div>
+
+<div class="prod-grid">
+<div>
+<sc-if value="{{isGlove}}" hint-placeholder-val="{{true}}">
+<div class="panel" role="tabpanel">
+<h3 class="h3">Dermis Glove</h3>
+<p class="body">A thin stretch liner with five fingertip pods and a thenar palm pad. Light enough for long sessions, and compatible with the hand tracking you already own.</p>
+<ul class="feat">
+<li>Five fingertip pods and a palm pad, each reporting 3-axis force</li>
+<li>Reference IMU on the back of the hand puts every force vector in one hand frame</li>
+<li>Webcam and VR-headset hand tracking at launch, with an AprilTag world anchor</li>
+<li>Sizes S–XL, left and right · ≤150 g target with pods, hub excluded</li>
+</ul>
+</div>
+</sc-if>
+<sc-if value="{{isRobot}}" hint-placeholder-val="{{false}}">
+<div class="panel" role="tabpanel">
+<h3 class="h3">Robot pods</h3>
+<p class="body">The same pod as the glove — same skin, magnet and calibration model — on printed mounts for your robot hand.</p>
+<ul class="feat">
+<li>Mounts for the hands founding labs use most; LEAP Hand and SO-101 first</li>
+<li>Paired with the glove location by location, index to index</li>
+<li>Twin-gap certificate with every kit, target ≤10%</li>
+<li>Sold alone to tactile data companies and hand makers whose customers need skin that matches glove data</li>
+</ul>
+</div>
+</sc-if>
+<sc-if value="{{isHub}}" hint-placeholder-val="{{false}}">
+<div class="panel" role="tabpanel">
+<h3 class="h3">Hub &amp; firmware</h3>
+<p class="body">Lossless, timestamped, self-describing data from every pod, over USB-C.</p>
+<ul class="feat">
+<li>≥200 Hz with every pod in sync — our proof of concept streams ~350 frames/s across 4 pods</li>
+<li>CRC-checked frames with raw counts always kept</li>
+<li>Clock sync to the host, with the residual shown and saved — target ≤2 ms</li>
+<li>Marker button, episodes and a built-in self-test</li>
+</ul>
+</div>
+</sc-if>
+<sc-if value="{{isStudio}}" hint-placeholder-val="{{false}}">
+<div class="panel" role="tabpanel">
+<h3 class="h3">Studio &amp; SDK</h3>
+<p class="body">Dermis Studio on macOS is the instrument; the Linux recorder, Python SDK and ROS 2 driver are what robot stacks run every day. Both write one session format.</p>
+<ul class="feat">
+<li>Live 3D view in newtons, with shear vectors, contact and slip</li>
+<li>Calibration wizards, QC station and twin view</li>
+<li>Exports to LeRobot v3, MCAP and CSV; RLDS in v1.0</li>
+<li>Local-first: no account, no cloud, no telemetry</li>
+</ul>
+</div>
+</sc-if>
+</div>
+
+<div class="rv">
+<div class="studio">
+<div class="studio-top">
+<div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+<span class="studio-title">Dermis Studio — Twin view</span>
+<span class="rec"><span class="live"></span>REC</span>
+</div>
+<div class="studio-body">
+<div class="side" aria-hidden="true">
+<span class="side-k">Pods</span>
+<div class="loc"><span class="loc-n">thumb_tip</span><span class="mtr"><i style="width:42%;background:#F2551D"></i></span><span class="mtr"><i style="width:40%;background:#2457F5"></i></span></div>
+<div class="loc sel"><span class="loc-n">index_tip</span><span class="mtr"><i style="width:68%;background:#F2551D"></i></span><span class="mtr"><i style="width:65%;background:#2457F5"></i></span></div>
+<div class="loc"><span class="loc-n">middle_tip</span><span class="mtr"><i style="width:30%;background:#F2551D"></i></span><span class="mtr"><i style="width:29%;background:#2457F5"></i></span></div>
+<div class="loc"><span class="loc-n">ring_tip</span><span class="mtr"><i style="width:14%;background:#F2551D"></i></span><span class="mtr"><i style="width:15%;background:#2457F5"></i></span></div>
+<div class="loc"><span class="loc-n">little_tip</span><span class="mtr"><i style="width:8%;background:#F2551D"></i></span><span class="mtr"><i style="width:8%;background:#2457F5"></i></span></div>
+<div class="loc"><span class="loc-n">palm_thenar</span><span class="mtr"><i style="width:22%;background:#F2551D"></i></span><span class="mtr"><i style="width:21%;background:#2457F5"></i></span></div>
+</div>
+<div class="chart-wrap">
+<div class="chart-top">
+<div class="seg" role="group" aria-label="Contact type">
+<button type="button" class="{{modePressCls}}" aria-pressed="{{isPress}}" onClick="{{pickPress}}">Press</button>
+<button type="button" class="{{modePinchCls}}" aria-pressed="{{isPinch}}" onClick="{{pickPinch}}">Pinch</button>
+<button type="button" class="{{modeSlipCls}}" aria-pressed="{{isSlip}}" onClick="{{pickSlip}}">Slip</button>
+</div>
+<span class="state">contact: {{contactState}}</span>
+</div>
+<div class="chart">
+<sc-if value="{{isPress}}" hint-placeholder-val="{{true}}">
+<svg class="draw" viewBox="0 0 640 230" role="img" aria-label="Illustrative normal-force traces for a press: glove and robot pods overlap">
+<g stroke="#E8EBEF" stroke-width="1"><line x1="40" y1="200" x2="620" y2="200"></line><line x1="40" y1="110" x2="620" y2="110"></line><line x1="40" y1="20" x2="620" y2="20"></line></g>
+<g font-family="Geist Mono, monospace" font-size="11" fill="#5C6370"><text x="4" y="204">0</text><text x="4" y="114">5</text><text x="4" y="24">10 N</text></g>
+<path class="tr" pathLength="1" fill="none" stroke="#F2551D" stroke-width="2.6" stroke-linejoin="round" d="M40 200L48 200L56 200L63 200L71 200L79 200L86 200L94 199L102 192L110 189L117 180L125 171L133 160L140 149L148 141L156 129L164 119L172 109L179 96L187 93L195 90L202 88L210 88L218 88L226 86L233 88L241 87L249 87L256 87L264 88L272 88L280 87L288 89L295 89L303 89L311 90L318 87L326 86L334 85L342 86L349 85L357 89L365 89L372 90L380 89L388 92L396 90L404 89L411 85L419 85L427 85L434 83L442 88L450 88L458 89L465 94L473 100L481 105L488 113L496 123L504 130L512 143L520 155L527 168L535 179L543 190L550 200L558 200L566 200L574 200L581 200L589 199L597 197L604 197L612 194L620 197"></path>
+<path class="tr r" pathLength="1" fill="none" stroke="#2457F5" stroke-width="2" stroke-linejoin="round" d="M40 199L48 200L56 200L63 200L71 200L79 200L86 200L94 200L102 197L110 192L117 185L125 177L133 166L140 157L148 148L156 136L164 127L172 117L179 108L187 101L195 96L202 93L210 93L218 95L226 94L233 94L241 93L249 93L256 93L264 93L272 96L280 96L288 93L295 94L303 93L311 95L318 92L326 95L334 91L342 90L349 91L357 93L365 92L372 95L380 97L388 99L396 96L404 94L411 94L419 90L427 90L434 90L442 91L450 93L458 94L465 99L473 100L481 108L488 114L496 122L504 132L512 141L520 153L527 164L535 177L543 185L550 195L558 200L566 200L574 200L581 200L589 200L597 198L604 194L612 195L620 196"></path>
+</svg>
+</sc-if>
+<sc-if value="{{isPinch}}" hint-placeholder-val="{{false}}">
+<svg class="draw" viewBox="0 0 640 230" role="img" aria-label="Illustrative normal-force traces for two pinches: glove and robot pods overlap">
+<g stroke="#E8EBEF" stroke-width="1"><line x1="40" y1="200" x2="620" y2="200"></line><line x1="40" y1="110" x2="620" y2="110"></line><line x1="40" y1="20" x2="620" y2="20"></line></g>
+<g font-family="Geist Mono, monospace" font-size="11" fill="#5C6370"><text x="4" y="204">0</text><text x="4" y="114">5</text><text x="4" y="24">10 N</text></g>
+<path class="tr" pathLength="1" fill="none" stroke="#F2551D" stroke-width="2.6" stroke-linejoin="round" d="M40 200L48 200L56 200L63 200L71 200L79 199L86 194L94 188L102 176L110 168L117 156L125 144L133 133L140 124L148 121L156 119L164 119L172 118L179 114L187 116L195 118L202 117L210 117L218 117L226 115L233 116L241 116L249 116L256 120L264 132L272 146L280 161L288 178L295 191L303 199L311 200L318 200L326 200L334 200L342 200L349 196L357 188L365 174L372 158L380 141L388 128L396 115L404 106L411 102L419 103L427 104L434 102L442 105L450 102L458 101L465 103L473 103L481 102L488 102L496 103L504 100L512 103L520 104L527 111L535 120L543 135L550 153L558 168L566 181L574 192L581 199L589 200L597 200L604 200L612 200L620 200"></path>
+<path class="tr r" pathLength="1" fill="none" stroke="#2457F5" stroke-width="2" stroke-linejoin="round" d="M40 199L48 200L56 200L63 200L71 200L79 200L86 198L94 192L102 186L110 174L117 162L125 152L133 140L140 132L148 126L156 122L164 123L172 122L179 121L187 120L195 121L202 121L210 120L218 123L226 121L233 121L241 121L249 121L256 122L264 129L272 144L280 160L288 172L295 186L303 195L311 200L318 200L326 200L334 200L342 200L349 199L357 193L365 179L372 168L380 154L388 140L396 124L404 113L411 109L419 106L427 108L434 108L442 108L450 108L458 107L465 109L473 106L481 108L488 107L496 107L504 108L512 107L520 108L527 111L535 121L543 131L550 146L558 162L566 177L574 189L581 197L589 200L597 200L604 199L612 200L620 200"></path>
+</svg>
+</sc-if>
+<sc-if value="{{isSlip}}" hint-placeholder-val="{{false}}">
+<svg class="draw" viewBox="0 0 640 230" role="img" aria-label="Illustrative normal-force traces for a slip: both pods show the same sudden drop">
+<rect x="360" y="14" width="48" height="188" rx="6" fill="#F2551D" opacity=".09"></rect>
+<text x="384" y="30" text-anchor="middle" font-family="Geist Mono, monospace" font-size="11" fill="#B93A0E">slip</text>
+<g stroke="#E8EBEF" stroke-width="1"><line x1="40" y1="200" x2="620" y2="200"></line><line x1="40" y1="110" x2="620" y2="110"></line><line x1="40" y1="20" x2="620" y2="20"></line></g>
+<g font-family="Geist Mono, monospace" font-size="11" fill="#5C6370"><text x="4" y="204">0</text><text x="4" y="114">5</text><text x="4" y="24">10 N</text></g>
+<path class="tr" pathLength="1" fill="none" stroke="#F2551D" stroke-width="2.6" stroke-linejoin="round" d="M40 200L48 200L56 200L63 200L71 200L79 199L86 197L94 193L102 183L110 179L117 169L125 160L133 149L140 138L148 132L156 122L164 115L172 108L179 98L187 99L195 100L202 99L210 99L218 99L226 97L233 98L241 98L249 98L256 98L264 99L272 98L280 97L288 99L295 99L303 99L311 100L318 99L326 98L334 98L342 99L349 97L357 100L365 110L372 116L380 124L388 147L396 163L404 161L411 156L419 160L427 163L434 159L442 161L450 160L458 160L465 160L473 160L481 160L488 160L496 161L504 157L512 160L520 161L527 161L535 160L543 162L550 169L558 173L566 178L574 184L581 192L589 196L597 199L604 200L612 200L620 200"></path>
+<path class="tr r" pathLength="1" fill="none" stroke="#2457F5" stroke-width="2" stroke-linejoin="round" d="M40 199L48 200L56 200L63 200L71 200L79 200L86 198L94 195L102 191L110 183L117 174L125 166L133 155L140 146L148 139L156 128L164 122L172 114L179 109L187 104L195 103L202 103L210 103L218 106L226 104L233 104L241 104L249 104L256 103L264 103L272 106L280 106L288 102L295 103L303 102L311 105L318 103L326 107L334 104L342 103L349 104L357 104L365 106L372 119L380 125L388 142L396 160L404 164L411 162L419 159L427 164L434 164L442 162L450 162L458 163L465 165L473 160L481 162L488 162L496 162L504 163L512 162L520 164L527 162L535 163L543 162L550 166L558 170L566 177L574 183L581 190L589 196L597 198L604 199L612 200L620 200"></path>
+</svg>
+</sc-if>
+</div>
+<div class="badges">
+<span class="badge"><i style="background:#F2551D"></i>glove · index_tip</span>
+<span class="badge"><i style="background:#2457F5"></i>robot · index_tip</span>
+<span class="badge">calibrated · N</span>
+<span class="badge">clock synced</span>
+</div>
+</div>
+</div>
+</div>
+<p class="src">Illustrative signals. Dermis Studio for macOS is in development; the Linux recorder, Python SDK and ROS 2 driver write the same session format.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="final" aria-labelledby="final-title">
+<div class="wrap" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:28px">
+<p class="label rv"><span class="ln"></span>Dermis</p>
+<h2 id="final-title" class="h2 rv">Teach your robot to feel the way people do.</h2>
+<div class="cta-row rv2" style="justify-content:center;margin-top:8px">
+<a class="btn btn-pri" href="{{contactHref}}">Email the team</a>
+</div>
+</div>
+</section>
+
+<footer class="foot">
+<div class="wrap">
+<div class="foot-grid">
+<div style="display:flex;flex-direction:column;gap:14px">
+<a class="logo" href="#top" aria-label="Dermis home">
+<svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><circle cx="10" cy="11" r="9" fill="#F2551D"></circle><circle cx="20" cy="11" r="9" fill="#2457F5" style="mix-blend-mode:multiply"></circle></svg>
+<span>Dermis</span>
+</a>
+<p class="body" style="max-width:300px;color:#5C6370">Change the skin, keep the newtons. Calibrated touch for human and robot hands.</p>
+</div>
+<div>
+<h4>Product</h4>
+<ul><li><a href="#product">Twin Kit</a></li><li><a href="#idea">Robot pods</a></li><li><a href="#how">How it works</a></li></ul>
+</div>
+<div>
+<h4>Company</h4>
+<ul><li><a href="#problem">Problem</a></li><li><a href="#idea">Idea</a></li></ul>
+</div>
+<div>
+<h4>Contact</h4>
+<ul><li><a href="{{contactHref}}">{{contactEmail}}</a></li></ul>
+</div>
+</div>
+<details class="sources">
+<summary>Sources for figures on this page</summary>
+<ol>
+<li><a href="https://www.besthub.dev/articles/how-30-000-hours-of-tactile-data-give-embodied-ai-a-real-sense-of-touch-04edbb812121">NeoteAI and Fudan VTLA results (BestHub, Jul 2026)</a></li>
+<li><a href="https://arxiv.org/abs/2607.23782">N0-VTLA: Scaling Vision–Tactile–Language–Action Model (arXiv 2607.23782)</a></li>
+<li><a href="https://arxiv.org/abs/2512.08920">OSMO: Open-Source Tactile Glove for Human-to-Robot Skill Transfer (arXiv 2512.08920)</a></li>
+<li><a href="https://xelarobotics.com/technology/">XELA uSkin calibration options (XELA Robotics)</a></li>
+<li><a href="https://www.ycombinator.com/launches/R3X-6thsense-giving-robots-touch">6thSense launch (Y Combinator)</a></li>
+<li><a href="https://www.ycombinator.com/launches/R78-proception-the-dexterous-robot-hand-we-wish-existed">Proception ProHand and ProGlove launch (Y Combinator)</a></li>
+</ol>
+</details>
+<div class="legal"><span>© 2026 Dermis</span><span>Designed in Buffalo, NY</span></div>
+</div>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"contactEmail":{"editor":"text","default":"[CONTACT EMAIL]","section":"Contact"},"motion":{"editor":"boolean","default":true,"section":"Motion"},"$preview":{"width":1440,"height":9200}}'>
+class Component extends DCLogic {
+  constructor(...args) {
+    super(...args);
+    this.state = { menu: false, tab: 'glove', mode: 'press' };
+  }
+  renderVals() {
+    const s = this.state || {};
+    const contact = String(this.props.contactEmail ?? '[CONTACT EMAIL]').trim();
+    const motion = this.props.motion ?? true;
+    const tab = s.tab || 'glove';
+    const mode = s.mode || 'press';
+    const states = { press: 'press', pinch: 'pinch', slip: 'slip detected' };
+    return {
+      rootCls: motion ? 'dm motion' : 'dm',
+      menuOpen: !!s.menu,
+      menuLabel: s.menu ? 'Close menu' : 'Open menu',
+      toggleMenu: () => this.setState({ menu: !this.state.menu }),
+      closeMenu: () => this.setState({ menu: false }),
+      isGlove: tab === 'glove', isRobot: tab === 'robot', isHub: tab === 'hub', isStudio: tab === 'studio',
+      tabGloveCls: tab === 'glove' ? 'tab on' : 'tab',
+      tabRobotCls: tab === 'robot' ? 'tab on' : 'tab',
+      tabHubCls: tab === 'hub' ? 'tab on' : 'tab',
+      tabStudioCls: tab === 'studio' ? 'tab on' : 'tab',
+      pickGlove: () => this.setState({ tab: 'glove' }),
+      pickRobot: () => this.setState({ tab: 'robot' }),
+      pickHub: () => this.setState({ tab: 'hub' }),
+      pickStudio: () => this.setState({ tab: 'studio' }),
+      isPress: mode === 'press', isPinch: mode === 'pinch', isSlip: mode === 'slip',
+      modePressCls: mode === 'press' ? 'on' : '',
+      modePinchCls: mode === 'pinch' ? 'on' : '',
+      modeSlipCls: mode === 'slip' ? 'on' : '',
+      pickPress: () => this.setState({ mode: 'press' }),
+      pickPinch: () => this.setState({ mode: 'pinch' }),
+      pickSlip: () => this.setState({ mode: 'slip' }),
+      contactState: states[mode],
+      contactHref: 'mailto:' + contact,
+      contactEmail: contact
+    };
+  }
+}
+</script>
+</body>
+</html>
