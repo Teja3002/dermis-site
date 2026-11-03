@@ -923,7 +923,7 @@ ul.feat li::before{content:"";flex:none;width:7px;height:7px;border-radius:2px;b
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"contactEmail":{"editor":"text","default":"[CONTACT EMAIL]","section":"Contact"},"motion":{"editor":"boolean","default":true,"section":"Motion"},"$preview":{"width":1440,"height":9200}}'>
+<script type="text/x-dc" data-dc-script data-props='{"contactEmail":{"editor":"text","default":"tejakris303@gmail.com","section":"Contact"},"motion":{"editor":"boolean","default":true,"section":"Motion"},"$preview":{"width":1440,"height":9200}}'>
 class Component extends DCLogic {
   constructor(...args) {
     super(...args);
@@ -931,7 +931,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     const s = this.state || {};
-    const contact = String(this.props.contactEmail ?? '[CONTACT EMAIL]').trim();
+    const contact = String(this.props.contactEmail ?? 'tejakris303@gmail.com').trim();
     const motion = this.props.motion ?? true;
     const tab = s.tab || 'glove';
     const mode = s.mode || 'press';
@@ -964,6 +964,43 @@ class Component extends DCLogic {
     };
   }
 }
+</script>
+<script>
+(function () {
+  var host = location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") return;
+  var ua = navigator.userAgent || "";
+  if (/bot|crawler|spider|slurp|facebookexternalhit|slackbot|telegrambot|twitterbot/i.test(ua)) return;
+  try {
+    var seen = "dermis-visit";
+    if (sessionStorage.getItem(seen)) return;
+    sessionStorage.setItem(seen, "1");
+  } catch (e) {}
+  fetch("https://get.geojs.io/v1/ip/geo.json")
+    .then(function (res) { return res.json(); })
+    .then(function (geo) {
+      var place = [geo.city, geo.region, geo.country].filter(Boolean).join(", ") || "Unknown location";
+      var body = {
+        _subject: "Dermis site opened in " + place,
+        _captcha: "false",
+        _template: "table",
+        Place: place,
+        Timezone: geo.timezone || "",
+        Page: location.pathname || "/",
+        When: new Date().toISOString()
+      };
+      if (geo.latitude && geo.longitude) {
+        body.Map = "https://www.openstreetmap.org/?mlat=" + encodeURIComponent(geo.latitude) + "&mlon=" + encodeURIComponent(geo.longitude) + "#map=11/" + geo.latitude + "/" + geo.longitude;
+      }
+      return fetch("https://formsubmit.co/ajax/tejakris303@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(body),
+        keepalive: true
+      });
+    })
+    .catch(function () {});
+})();
 </script>
 </body>
 </html>
