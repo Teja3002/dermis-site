@@ -972,31 +972,29 @@ class Component extends DCLogic {
   var ua = navigator.userAgent || "";
   if (/bot|crawler|spider|slurp|facebookexternalhit|slackbot|telegrambot|twitterbot/i.test(ua)) return;
   try {
-    var seen = "dermis-visit";
-    if (sessionStorage.getItem(seen)) return;
-    sessionStorage.setItem(seen, "1");
+    if (sessionStorage.getItem("dermis-visit")) return;
   } catch (e) {}
   fetch("https://get.geojs.io/v1/ip/geo.json")
     .then(function (res) { return res.json(); })
     .then(function (geo) {
       var place = [geo.city, geo.region, geo.country].filter(Boolean).join(", ") || "Unknown location";
-      var body = {
-        _subject: "Dermis site opened in " + place,
-        _captcha: "false",
-        _template: "table",
-        Place: place,
-        Timezone: geo.timezone || "",
-        Page: location.pathname || "/",
-        When: new Date().toISOString()
-      };
+      var map = "";
       if (geo.latitude && geo.longitude) {
-        body.Map = "https://www.openstreetmap.org/?mlat=" + encodeURIComponent(geo.latitude) + "&mlon=" + encodeURIComponent(geo.longitude) + "#map=11/" + geo.latitude + "/" + geo.longitude;
+        map = "https://www.openstreetmap.org/?mlat=" + encodeURIComponent(geo.latitude) + "&mlon=" + encodeURIComponent(geo.longitude) + "#map=11/" + geo.latitude + "/" + geo.longitude;
       }
-      return fetch("https://formsubmit.co/ajax/tejakris303@gmail.com", {
+      var headers = {
+        Title: "Dermis site opened in " + place,
+        Tags: "globe_with_meridians"
+      };
+      if (map) headers.Click = map;
+      return fetch("https://ntfy.sh/dermis-visits-k7m2qp9x", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(body),
+        headers: headers,
+        body: place + "\nTimezone: " + (geo.timezone || "") + "\nPage: " + (location.pathname || "/") + "\nWhen: " + new Date().toISOString(),
         keepalive: true
+      }).then(function (res) {
+        if (!res.ok) return;
+        try { sessionStorage.setItem("dermis-visit", "1"); } catch (e) {}
       });
     })
     .catch(function () {});
