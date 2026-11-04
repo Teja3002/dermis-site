@@ -934,7 +934,6 @@ ul.feat li::before{content:"";flex:none;width:7px;height:7px;border-radius:2px;b
 <h4>Contact</h4>
 <ul>
 <li><a href="{{contactHref}}">{{contactEmail}}</a></li>
-<li><a href="{{contactHref2}}">{{contactEmail2}}</a></li>
 </ul>
 </div>
 </div>
@@ -954,7 +953,7 @@ ul.feat li::before{content:"";flex:none;width:7px;height:7px;border-radius:2px;b
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"contactEmail":{"editor":"text","default":"tejakris303@gmail.com","section":"Contact"},"contactEmail2":{"editor":"text","default":"sujaldat@buffalo.edu","section":"Contact"},"motion":{"editor":"boolean","default":true,"section":"Motion"},"$preview":{"width":1440,"height":9200}}'>
+<script type="text/x-dc" data-dc-script data-props='{"contactEmail":{"editor":"text","default":"hello@dermistouch.com","section":"Contact"},"motion":{"editor":"boolean","default":true,"section":"Motion"},"$preview":{"width":1440,"height":9200}}'>
 class Component extends DCLogic {
   constructor(...args) {
     super(...args);
@@ -962,8 +961,7 @@ class Component extends DCLogic {
   }
   renderVals() {
     const s = this.state || {};
-    const contact = String(this.props.contactEmail ?? 'tejakris303@gmail.com').trim();
-    const contact2 = String(this.props.contactEmail2 ?? 'sujaldat@buffalo.edu').trim();
+    const contact = String(this.props.contactEmail ?? 'hello@dermistouch.com').trim();
     const motion = this.props.motion ?? true;
     const tab = s.tab || 'glove';
     const mode = s.mode || 'press';
@@ -991,11 +989,9 @@ class Component extends DCLogic {
       pickPinch: () => this.setState({ mode: 'pinch' }),
       pickSlip: () => this.setState({ mode: 'slip' }),
       contactState: states[mode],
-      contactTeamHref: 'mailto:' + contact + ',' + contact2,
+      contactTeamHref: 'mailto:' + contact,
       contactHref: 'mailto:' + contact,
-      contactEmail: contact,
-      contactHref2: 'mailto:' + contact2,
-      contactEmail2: contact2
+      contactEmail: contact
     };
   }
 }
