@@ -119,6 +119,73 @@ if (alias) {
 
 $('#year').textContent = new Date().getFullYear();
 
+// Hero hand: each sensor node opens a short card about what that skin region senses.
+const spotDetails = {
+  force: ['Index fingertip', 'Force + contact location', 'Measures how hard an object presses and where on the pad it touches.'],
+  shear: ['Middle fingertip', 'Shear', 'Picks up sideways drag as an object slides or twists against the skin.'],
+  slip: ['Ring fingertip', 'Slip', 'Flags the moment a held object starts to move, before it drops.'],
+  temperature: ['Little fingertip', 'Temperature', 'Reads warmth at the contact surface alongside pressure.'],
+  grip: ['Thumb', 'Grip', 'Tracks the opposing force between thumb and fingers while holding.'],
+  palm: ['Palm', 'Palm skin', 'Wide-area contact for whole-hand grasps, not just fingertip pinches.']
+};
+const spotNodes = $$('.hero-hand [data-spot]');
+const spotCard = $('#spot-card');
+let activeSpot = null, spotTimer = 0, spotTouched = false;
+function showSpot(node) {
+  const [where, title, body] = spotDetails[node.dataset.spot];
+  spotNodes.forEach(item => item.classList.toggle('active', item === node));
+  spotCard.querySelector('.spot-where').textContent = where;
+  spotCard.querySelector('.spot-title').textContent = title;
+  spotCard.querySelector('.spot-body').textContent = body;
+  spotCard.style.setProperty('--x', node.style.getPropertyValue('--x'));
+  spotCard.style.setProperty('--y', node.style.getPropertyValue('--y'));
+  spotCard.classList.toggle('flip', parseFloat(node.style.getPropertyValue('--x')) > 55);
+  spotCard.hidden = false;
+  activeSpot = node;
+}
+function takeOverSpots() { spotTouched = true; clearInterval(spotTimer); }
+spotNodes.forEach(node => {
+  node.addEventListener('pointerenter', () => { takeOverSpots(); showSpot(node); });
+  node.addEventListener('focus', () => { takeOverSpots(); showSpot(node); });
+  node.addEventListener('click', () => { takeOverSpots(); showSpot(node); });
+});
+showSpot(spotNodes[3]);
+if (!reducedMotion.matches) {
+  spotTimer = setInterval(() => {
+    if (spotTouched) return;
+    showSpot(spotNodes[(spotNodes.indexOf(activeSpot) + 1) % spotNodes.length]);
+  }, 3200);
+}
+
+// Hero foot: signal channels light up in turn like a scanning readout.
+const channels = $$('#channels .ch');
+let channelIndex = 0;
+const stepChannel = () => {
+  channels.forEach((channel, index) => channel.classList.toggle('on', index === channelIndex));
+  channelIndex = (channelIndex + 1) % channels.length;
+};
+stepChannel();
+if (!reducedMotion.matches) setInterval(stepChannel, 1400);
+
+// Fingertip composite: two tabs share one panel beside the render.
+const tabs = $$('.composite-panel [role="tab"]');
+function selectTab(tab) {
+  tabs.forEach(item => {
+    const selected = item === tab;
+    item.setAttribute('aria-selected', String(selected));
+    item.tabIndex = selected ? 0 : -1;
+    document.getElementById(item.getAttribute('aria-controls')).hidden = !selected;
+  });
+}
+tabs.forEach((tab, index) => {
+  tab.addEventListener('click', () => selectTab(tab));
+  tab.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    const next = tabs[(index + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+    selectTab(next); next.focus();
+  });
+});
+
 // Hero: a wireframe tactile membrane that dents and ripples under contact.
 const field = $('#field');
 const fieldContext = field.getContext('2d');
@@ -205,9 +272,6 @@ function drawField(time) {
   });
 }
 
-const hudClock = $('#hud-clock');
-const started = performance.now();
-let lastHud = 0;
 function animateField(time) {
   requestAnimationFrame(animateField);
   if (!fieldVisible || document.hidden) return;
@@ -219,11 +283,6 @@ function animateField(time) {
   while (contacts.length && now - contacts[0].born > 5) contacts.shift();
   pointerContact.strength += (pointerContact.target - pointerContact.strength) * 0.08;
   drawField(time);
-  if (time - lastHud > 120) {
-    lastHud = time;
-    const seconds = Math.floor((time - started) / 1000);
-    hudClock.textContent = `T+${[seconds / 3600, (seconds / 60) % 60, seconds % 60].map(v => String(Math.floor(v)).padStart(2, '0')).join(':')}`;
-  }
 }
 new ResizeObserver(resizeField).observe(field);
 resizeField();

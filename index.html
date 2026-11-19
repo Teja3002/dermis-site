@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="/assets/dermis-hand-fingerprint.png">
-  <link rel="stylesheet" href="/styles.css?v=touch-7"><script type="module" src="/app.js?v=touch-1"></script>
+  <link rel="stylesheet" href="/styles.css?v=touch-8"><script type="module" src="/app.js?v=touch-2"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -20,7 +20,7 @@
       <img src="/assets/web/dermis-brand-mark-light.png" width="40" height="40" alt=""><span>dermis</span>
     </a>
     <nav class="desktop-nav" aria-label="Main navigation"><a href="#technology">Tactile skin</a><a href="#signal">Touch signals</a><a href="#applications">Applications</a></nav>
-    <a class="header-cta" href="mailto:hello@dermistouch.com"><span class="pulse" aria-hidden="true"></span>Reach out</a>
+    <a class="header-cta" href="mailto:hello@dermistouch.com">Reach out</a>
     <button class="menu-toggle" aria-label="Open navigation" aria-expanded="false" aria-controls="mobile-nav"><span></span><span></span></button>
   </header>
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation" hidden><a href="#technology">Tactile skin</a><a href="#signal">Touch signals</a><a href="#applications">Applications</a><a href="#contact">Request access</a></nav>
@@ -29,8 +29,6 @@
     <section class="hero" id="product" aria-labelledby="hero-title">
       <canvas id="field" class="hero-field" aria-hidden="true"></canvas>
       <div class="hero-vignette" aria-hidden="true"></div>
-      <div class="hud hud-tl" aria-hidden="true"><span>DRM / TACTILE SKIN</span><span>SYS ONLINE <i class="blink"></i></span></div>
-      <div class="hud hud-tr" aria-hidden="true"><span>TACTILE SENSING</span><span id="hud-clock">T+00:00:00</span></div>
 
       <div class="hero-copy">
         <p class="kicker">Tactile sensing for robot hands</p>
@@ -43,11 +41,13 @@
         <div class="hand-glow" aria-hidden="true"></div>
         <div class="hand-surface">
           <img src="/assets/dermis-hand-fingerprint.png" alt="Silver robotic hand with black fingerprint-textured Dermis tactile pads" width="1024" height="1536" fetchpriority="high">
-          <span class="node node-tip" style="--x:21.2%;--y:20.8%" aria-hidden="true"></span>
-          <span class="node node-tip" style="--x:36.4%;--y:12.1%" aria-hidden="true"></span>
-          <span class="node node-tip" style="--x:50.3%;--y:8%" aria-hidden="true"></span>
-          <span class="node node-tip" style="--x:66.2%;--y:13.6%" aria-hidden="true"></span>
-          <span class="node node-tip" style="--x:82.7%;--y:37.9%" aria-hidden="true"></span>
+          <button type="button" class="node node-tip" style="--x:21.2%;--y:20.8%" data-spot="temperature" aria-label="Little fingertip: temperature"></button>
+          <button type="button" class="node node-tip" style="--x:36.4%;--y:12.1%" data-spot="slip" aria-label="Ring fingertip: slip"></button>
+          <button type="button" class="node node-tip" style="--x:50.3%;--y:8%" data-spot="shear" aria-label="Middle fingertip: shear"></button>
+          <button type="button" class="node node-tip" style="--x:66.2%;--y:13.6%" data-spot="force" aria-label="Index fingertip: force and contact location"></button>
+          <button type="button" class="node node-tip" style="--x:82.7%;--y:37.9%" data-spot="grip" aria-label="Thumb: grip"></button>
+          <button type="button" class="node node-hub" style="--x:44%;--y:58%" data-spot="palm" aria-label="Palm skin"></button>
+          <div class="spot-card" id="spot-card" role="status" aria-live="polite" hidden><p class="spot-where"></p><h3 class="spot-title"></h3><p class="spot-body"></p><p class="spot-note">Concept · in development</p></div>
           <span class="node node-palm" style="--x:39%;--y:52.8%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:47%;--y:52%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:55%;--y:50.2%" aria-hidden="true"></span>
@@ -59,11 +59,18 @@
           <span class="node node-palm" style="--x:39.3%;--y:66.7%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:45.5%;--y:66%" aria-hidden="true"></span>
         </div>
-        <figcaption>Concept render</figcaption>
+        <figcaption>Concept render · tap a sensor</figcaption>
       </figure>
 
       <div class="hero-foot" aria-hidden="true">
-        <div class="ticker"><div class="ticker-track"><span>Force</span><span>Shear</span><span>Slip</span><span>Grip</span><span>Temperature</span><span>Contact location</span><span>Force</span><span>Shear</span><span>Slip</span><span>Grip</span><span>Temperature</span><span>Contact location</span></div></div>
+        <div class="channels" id="channels">
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Force</span>
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Shear</span>
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Slip</span>
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Grip</span>
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Temperature</span>
+          <span class="ch"><b><s></s><s></s><s></s><s></s><s></s></b>Contact location</span>
+        </div>
         <span class="hero-hint">Move across the surface</span>
       </div>
     </section>
@@ -78,26 +85,33 @@
         <p class="mono-label">The skin</p>
         <h2 id="layers-title">Touch begins<br><span class="dim">at the surface.</span></h2>
       </div>
-      <div class="layers-grid">
-        <figure class="frame layers-visual">
+      <div class="skin-composite layers-visual">
+        <div class="frame composite-image">
           <img src="/assets/web/fingertip-grid-concept.png" alt="Exploded fingertip concept with orange force arrows, a ribbed contact pad, a yellow grid layer, a dark piezoresistive film, and one generic printed circuit board above a sealed housing. The assembled fingertip is on the right." width="1536" height="1024" loading="lazy">
-          <figcaption class="fingertip-signals">
+        </div>
+        <div class="composite-panel">
+          <div class="tabs" role="tablist" aria-label="Fingertip details">
+            <button type="button" role="tab" id="tab-concept" aria-controls="panel-concept" aria-selected="true">Fingertip concept</button>
+            <button type="button" role="tab" id="tab-signals" aria-controls="panel-signals" aria-selected="false" tabindex="-1">Signals</button>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="panel-concept" aria-labelledby="tab-concept">
+            <ol class="concept-list">
+              <li><span>01</span><div><h3>Applied force</h3><p>Orange arrows show the direction of force as an object presses against the pad.</p></div></li>
+              <li><span>02</span><div><h3>Contact pad</h3><p>The black ribbed surface is the part that touches the object.</p></div></li>
+              <li><span>03</span><div><h3>Assembled fingertip</h3><p>The view on the right shows the pad seated on the closed housing.</p></div></li>
+            </ol>
+          </div>
+          <div class="tab-panel" role="tabpanel" id="panel-signals" aria-labelledby="tab-signals" hidden>
             <p class="mono-label">Signals Dermis is developing</p>
-            <ul>
-              <li>Force</li><li>Shear</li><li>Grip</li><li>Slip</li><li>Temperature</li><li>Contact location</li>
+            <ul class="signal-tiles">
+              <li><strong>Force</strong><span>How hard the object presses</span></li>
+              <li><strong>Shear</strong><span>Sideways drag across the pad</span></li>
+              <li><strong>Grip</strong><span>Holding force between fingers</span></li>
+              <li><strong>Slip</strong><span>When an object starts to move</span></li>
+              <li><strong>Temperature</strong><span>Warmth at the contact surface</span></li>
+              <li><strong>Contact location</strong><span>Where on the pad touch happens</span></li>
             </ul>
-          </figcaption>
-        </figure>
-        <div class="fingertip-details">
-          <p class="mono-label">Fingertip concept</p>
-          <dl>
-            <dt>Applied force</dt>
-            <dd>Orange arrows show the direction of force as an object presses against the pad.</dd>
-            <dt>Contact pad</dt>
-            <dd>The black ribbed surface is the part that touches the object.</dd>
-            <dt>Assembled fingertip</dt>
-            <dd>The view on the right shows the pad seated on the closed housing.</dd>
-          </dl>
+          </div>
         </div>
       </div>
     </section>
@@ -158,5 +172,40 @@
   </footer>
 
   <dialog id="privacy-dialog" aria-labelledby="privacy-title"><button class="dialog-close" aria-label="Close privacy details">×</button><p class="mono-label">DERMIS / PRIVACY</p><h2 id="privacy-title">Your project.<br>Your information.</h2><p>This website has no analytics or advertising trackers. Interactive product and signal demonstrations run in your browser and do not connect to your hardware.</p><p>If you submit the contact form, your name, organization, email, selected interest and message are sent to FormSubmit for delivery to hello@dermistouch.com. Do not include confidential technical information in the form.</p><p>You can also contact us directly at <a href="mailto:hello@dermistouch.com">hello@dermistouch.com</a> to ask about your inquiry or request deletion of information you have shared.</p></dialog>
+<script>
+(function () {
+  var host = location.hostname;
+  if (host === "localhost" || host === "127.0.0.1") return;
+  var ua = navigator.userAgent || "";
+  if (/bot|crawler|spider|slurp|facebookexternalhit|slackbot|telegrambot|twitterbot/i.test(ua)) return;
+  try {
+    if (sessionStorage.getItem("dermis-visit")) return;
+  } catch (e) {}
+  fetch("https://get.geojs.io/v1/ip/geo.json")
+    .then(function (res) { return res.json(); })
+    .then(function (geo) {
+      var place = [geo.city, geo.region, geo.country].filter(Boolean).join(", ") || "Unknown location";
+      var map = "";
+      if (geo.latitude && geo.longitude) {
+        map = "https://www.openstreetmap.org/?mlat=" + encodeURIComponent(geo.latitude) + "&mlon=" + encodeURIComponent(geo.longitude) + "#map=11/" + geo.latitude + "/" + geo.longitude;
+      }
+      var headers = {
+        Title: "Dermis site opened in " + place,
+        Tags: "globe_with_meridians"
+      };
+      if (map) headers.Click = map;
+      return fetch("https://ntfy.sh/dermis-visits-k7m2qp9x", {
+        method: "POST",
+        headers: headers,
+        body: place + "\nTimezone: " + (geo.timezone || "") + "\nPage: " + (location.pathname || "/") + "\nWhen: " + new Date().toISOString(),
+        keepalive: true
+      }).then(function (res) {
+        if (!res.ok) return;
+        try { sessionStorage.setItem("dermis-visit", "1"); } catch (e) {}
+      });
+    })
+    .catch(function () {});
+})();
+</script>
 </body>
 </html>
