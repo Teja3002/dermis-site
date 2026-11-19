@@ -4,13 +4,13 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Dermis | Robots can see. Now they can feel.</title>
   <meta name="description" content="Dermis is developing tactile skins that give robot fingers and grippers a sense of touch.">
-  <meta name="theme-color" content="#050607"><meta property="og:type" content="website"><meta property="og:site_name" content="Dermis"><meta property="og:title" content="Dermis | A sense of touch for robotics."><meta property="og:description" content="Tactile skins for robotic fingers, grippers and contact surfaces."><meta property="og:url" content="https://dermistouch.com/"><meta property="og:image" content="https://dermistouch.com/assets/web/fingertip-grid-concept.png">
+  <meta name="theme-color" content="#050607"><meta property="og:type" content="website"><meta property="og:site_name" content="Dermis"><meta property="og:title" content="Dermis | A sense of touch for robotics."><meta property="og:description" content="Tactile skins for robotic fingers, grippers and contact surfaces."><meta property="og:url" content="https://dermistouch.com/"><meta property="og:image" content="https://dermistouch.com/assets/web/fingertip-grid.png">
   <link rel="canonical" href="https://dermistouch.com/"><link rel="icon" href="/assets/web/dermis-brand-mark.png" type="image/png" sizes="400x400">
   <link rel="icon" href="/assets/web/dermis-brand-mark-light.png" type="image/png" media="(prefers-color-scheme: dark)">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="/assets/dermis-hand-fingerprint.png">
-  <link rel="stylesheet" href="/styles.css?v=touch-8"><script type="module" src="/app.js?v=touch-2"></script>
+  <link rel="stylesheet" href="/styles.css?v=touch-9"><script type="module" src="/app.js?v=touch-3"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -47,7 +47,7 @@
           <button type="button" class="node node-tip" style="--x:66.2%;--y:13.6%" data-spot="force" aria-label="Index fingertip: force and contact location"></button>
           <button type="button" class="node node-tip" style="--x:82.7%;--y:37.9%" data-spot="grip" aria-label="Thumb: grip"></button>
           <button type="button" class="node node-hub" style="--x:44%;--y:58%" data-spot="palm" aria-label="Palm skin"></button>
-          <div class="spot-card" id="spot-card" role="status" aria-live="polite" hidden><p class="spot-where"></p><h3 class="spot-title"></h3><p class="spot-body"></p><p class="spot-note">Concept · in development</p></div>
+          <div class="spot-card" id="spot-card" role="status" aria-live="polite" hidden><p class="spot-where"></p><h3 class="spot-title"></h3><p class="spot-body"></p></div>
           <span class="node node-palm" style="--x:39%;--y:52.8%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:47%;--y:52%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:55%;--y:50.2%" aria-hidden="true"></span>
@@ -59,7 +59,7 @@
           <span class="node node-palm" style="--x:39.3%;--y:66.7%" aria-hidden="true"></span>
           <span class="node node-palm" style="--x:45.5%;--y:66%" aria-hidden="true"></span>
         </div>
-        <figcaption>Concept render · tap a sensor</figcaption>
+        <figcaption>Tap a sensor</figcaption>
       </figure>
 
       <div class="hero-foot" aria-hidden="true">
@@ -87,15 +87,15 @@
       </div>
       <div class="skin-composite layers-visual">
         <div class="frame composite-image">
-          <img src="/assets/web/fingertip-grid-concept.png" alt="Exploded fingertip concept with orange force arrows, a ribbed contact pad, a yellow grid layer, a dark piezoresistive film, and one generic printed circuit board above a sealed housing. The assembled fingertip is on the right." width="1536" height="1024" loading="lazy">
+          <img src="/assets/web/fingertip-grid.png" alt="Exploded fingertip with orange force arrows, a ribbed contact pad, a yellow grid layer, a dark piezoresistive film, and one generic printed circuit board above a sealed housing. The assembled fingertip is on the right." width="1536" height="1024" loading="lazy">
         </div>
         <div class="composite-panel">
           <div class="tabs" role="tablist" aria-label="Fingertip details">
-            <button type="button" role="tab" id="tab-concept" aria-controls="panel-concept" aria-selected="true">Fingertip concept</button>
+            <button type="button" role="tab" id="tab-fingertip" aria-controls="panel-fingertip" aria-selected="true">Fingertip</button>
             <button type="button" role="tab" id="tab-signals" aria-controls="panel-signals" aria-selected="false" tabindex="-1">Signals</button>
           </div>
-          <div class="tab-panel" role="tabpanel" id="panel-concept" aria-labelledby="tab-concept">
-            <ol class="concept-list">
+          <div class="tab-panel" role="tabpanel" id="panel-fingertip" aria-labelledby="tab-fingertip">
+            <ol class="fingertip-list">
               <li><span>01</span><div><h3>Applied force</h3><p>Orange arrows show the direction of force as an object presses against the pad.</p></div></li>
               <li><span>02</span><div><h3>Contact pad</h3><p>The black ribbed surface is the part that touches the object.</p></div></li>
               <li><span>03</span><div><h3>Assembled fingertip</h3><p>The view on the right shows the pad seated on the closed housing.</p></div></li>
@@ -143,7 +143,7 @@
       <div class="use-grid">
         <article class="use"><div class="use-img"><img src="/assets/web/gripper-glass-contact.png" alt="Assembled robotic gripper lifting a frosted glass cylinder with ribbed contact pads" width="1536" height="1024" loading="lazy"></div><div class="use-body"><h3>Grippers &amp; manipulation</h3><p>Contact feedback for parallel grippers handling real, imperfect objects.</p></div></article>
         <article class="use"><div class="use-img dark"><img src="/assets/dermis-hand.png" alt="Robotic hand with Dermis skin on fingers and palm" width="1024" height="1536" loading="lazy"></div><div class="use-body"><h3>Dexterous hands</h3><p>Skins for fingertips and palms, so multi-finger hands know what they’re holding.</p></div></article>
-        <article class="use"><div class="use-img"><img src="/assets/web/fingertip-grid-concept.png" alt="Conceptual tactile contact surface on a robotic fingertip" width="1536" height="1024" loading="lazy"></div><div class="use-body"><h3>Research &amp; robot learning</h3><p>Use touch to study how robots handle objects and learn new manipulation tasks.</p></div></article>
+        <article class="use"><div class="use-img"><img src="/assets/web/fingertip-grid.png" alt="Tactile contact surface on a robotic fingertip" width="1536" height="1024" loading="lazy"></div><div class="use-body"><h3>Research &amp; robot learning</h3><p>Use touch to study how robots handle objects and learn new manipulation tasks.</p></div></article>
       </div>
     </section>
 
@@ -168,7 +168,7 @@
 
   <footer class="site-footer">
     <div class="footer-giant" aria-hidden="true">dermis</div>
-    <div class="footer-row"><span>© <span id="year">2026</span> Dermis</span><a class="footer-mail" href="mailto:hello@dermistouch.com">hello@dermistouch.com</a><span>Concept visuals · <button type="button" class="inline-button" data-open-privacy>Privacy</button></span><a class="footer-social" href="https://www.linkedin.com/company/dermis-touch/posts/" aria-label="Dermis on LinkedIn"><img src="/assets/web/linkedin-in.png" width="24" height="20" alt="">LinkedIn</a><a href="#product">Back to top ↑</a></div>
+    <div class="footer-row"><span>© <span id="year">2026</span> Dermis</span><a class="footer-mail" href="mailto:hello@dermistouch.com">hello@dermistouch.com</a><span><button type="button" class="inline-button" data-open-privacy>Privacy</button></span><a class="footer-social" href="https://www.linkedin.com/company/dermis-touch/posts/" aria-label="Dermis on LinkedIn"><img src="/assets/web/linkedin-in.png" width="24" height="20" alt="">LinkedIn</a><a href="#product">Back to top ↑</a></div>
   </footer>
 
   <dialog id="privacy-dialog" aria-labelledby="privacy-title"><button class="dialog-close" aria-label="Close privacy details">×</button><p class="mono-label">DERMIS / PRIVACY</p><h2 id="privacy-title">Your project.<br>Your information.</h2><p>This website has no analytics or advertising trackers. Interactive product and signal demonstrations run in your browser and do not connect to your hardware.</p><p>If you submit the contact form, your name, organization, email, selected interest and message are sent to FormSubmit for delivery to hello@dermistouch.com. Do not include confidential technical information in the form.</p><p>You can also contact us directly at <a href="mailto:hello@dermistouch.com">hello@dermistouch.com</a> to ask about your inquiry or request deletion of information you have shared.</p></dialog>

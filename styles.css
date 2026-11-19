@@ -163,12 +163,12 @@ button.node.active { background: #fff; box-shadow: 0 0 0 6px rgba(255,90,46,.35)
 .tabs button[aria-selected="true"]::after { transform: scaleX(1); }
 .tab-panel { flex: 1; padding: clamp(20px, 2.4vw, 32px); animation: spot-in .4s var(--ease); }
 .tab-panel[hidden] { display: none; }
-.concept-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-.concept-list li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
-.concept-list li:last-child { border-bottom: 0; }
-.concept-list span { font: 500 12px/1.6 var(--mono); color: var(--accent); }
-.concept-list h3 { font-size: 18px; letter-spacing: -.01em; line-height: 1.3; margin-bottom: 4px; }
-.concept-list p { color: var(--muted); font-size: 15px; }
+.fingertip-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.fingertip-list li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+.fingertip-list li:last-child { border-bottom: 0; }
+.fingertip-list span { font: 500 12px/1.6 var(--mono); color: var(--accent); }
+.fingertip-list h3 { font-size: 18px; letter-spacing: -.01em; line-height: 1.3; margin-bottom: 4px; }
+.fingertip-list p { color: var(--muted); font-size: 15px; }
 .signal-tiles { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
 .signal-tiles li { display: flex; flex-direction: column; gap: 6px; padding: 16px; background: var(--bg-2); transition: background .3s; }
 .signal-tiles li:hover { background: #12161a; }
